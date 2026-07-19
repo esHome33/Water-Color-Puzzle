@@ -1,53 +1,65 @@
 package fr.eshome.watersort.game;
 
 import fr.eshome.watersort.ui.TubeView;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class WaterSortGame {
-    private static final int NB_TUBES = 5;
+    private static final int NB_TUBES = 7;
     private static final int TAILLE_TUBES = 10;
     private final List<Tube> tubes;
-    private final List<TubeView> conteneur;
 
-    private int start_number = -1;
-    private int dest_number = -1;
+    private final FromTo fromTo = new FromTo();
 
-    private final HBox ui_container;
-    private FromTo fromTo = new FromTo();
+    public SimpleBooleanProperty solvedState = new SimpleBooleanProperty(false);
 
 
     public WaterSortGame(HBox conteneur, Pane colorProp) {
-        ui_container = conteneur;
         // init of lists
-        this.conteneur = new ArrayList<>(NB_TUBES);
         this.tubes = new ArrayList<>(NB_TUBES);
         // create the given number of tubes
         for (int i = 0; i < NB_TUBES; i++) {
-            Tube t = new Tube(TAILLE_TUBES, i, this.fromTo);
+            Tube t;
+            if (i == 1 || i == 3 || i == 5) {
+                t = Tube.getEmptyTube(TAILLE_TUBES, i, fromTo);
+            } else {
+                t = new Tube(TAILLE_TUBES, i, fromTo);
+            }
             this.tubes.add(t);
             TubeView tubeView = t.getTubeView();
-            this.conteneur.add(tubeView);
-            tubeView.isSelected.addListener((_, _, _) -> {
-                fromTo.storeId(tubeView.getNumber());
-            });
+            conteneur.getChildren().add(tubeView);
+            tubeView.isSelected.addListener((_, _, _) ->
+                    fromTo.storeId(tubeView.getNumber())
+            );
         }
         // add all tubeviews to the ui container
-        ui_container.getChildren().addAll(this.conteneur);
-        // link colorProperty with
+        // link FromTo colorProperty with a callback that starts the pouring of one tube into another
         fromTo.colorProperty().addListener((_, _, newValue) -> {
-            System.out.println("Color changed " + newValue.toString());
             colorProp.setBackground(new Background(new BackgroundFill(newValue, null, null)));
+            if (newValue.equals(Color.GREEN)) {
+                boolean resultat = move(fromTo.getFrom(), fromTo.getTo());
+                if (resultat) {
+                    System.out.println("Move successful");
+                } else {
+                    System.out.println("Move failed");
+                }
+                tubes.get(fromTo.getFrom()).refreshUI();
+                tubes.get(fromTo.getTo()).refreshUI();
+                fromTo.reset();
+                boolean s = isSolved();
+                System.out.println("Game solved: " + s);
+                solvedState.set(s);
+                fromTo.accepte = !s;
+            }
         });
-    }
-
-    public List<Tube> getTubes() {
-        return tubes;
     }
 
     public boolean move(int fromIndex, int toIndex) {
@@ -59,10 +71,16 @@ public class WaterSortGame {
     }
 
     public boolean isSolved() {
+        ArrayList<Color> colors = new ArrayList<>();
         for (Tube t : tubes) {
-            if (!t.isSolved()) return false;
+            Color couleur = t.getColor();
+            if (null == couleur) return false;
+            if (!Color.WHITE.equals(couleur)) {
+                colors.add(couleur);
+            }
         }
-        return true;
+        HashSet<Color> setColor = new HashSet<>(colors);
+        return setColor.size() == colors.size();
     }
 
     public void print() {
@@ -71,4 +89,9 @@ public class WaterSortGame {
         }
     }
 
+    public static WaterSortGame newGame(HBox conteneur, Pane colorProp) {
+        // restart a new game
+        conteneur.getChildren().clear();
+        return new WaterSortGame(conteneur, colorProp);
+    }
 }

@@ -30,6 +30,8 @@ public class TubeView extends VBox {
             }
         });
         setSpacing(1.0);
+        setMinWidth(SEGMENT_WIDTH + 2d);
+        setMinHeight(SEGMENT_HEIGHT * 11 + 1d);
         setStyle("-fx-border-color: white;" +
                 "-fx-border-width: 2;" +
                 "-fx-border-radius: 10;" +
@@ -74,5 +76,17 @@ public class TubeView extends VBox {
             case ORANGE -> javafx.scene.paint.Color.ORANGE;
             case PURPLE -> javafx.scene.paint.Color.PURPLE;
         };
+    }
+
+    public void refreshUI(Tube tube) {
+        getChildren().clear();
+        for (Color color : tube.getSegments()) {
+            Rectangle rect = new Rectangle(SEGMENT_WIDTH, SEGMENT_HEIGHT);
+            rect.setArcWidth(5d);
+            rect.setArcHeight(5d);
+            rect.setFill(getColor(color));
+            getChildren().add(rect);
+        }
+        toggleSelect();
     }
 }

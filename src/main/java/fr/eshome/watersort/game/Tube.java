@@ -23,10 +23,27 @@ public class Tube {
         tubeView = new TubeView(this, number, fromTo);
     }
 
+    public static Tube getEmptyTube(int capacity, int number, FromTo fromTo) {
+        Tube retour = new Tube(capacity, number);
+        retour.tubeView = new TubeView(retour, number, fromTo);
+        System.out.println("Creating empty tube " + number);
+        return retour;
+    }
+
+    /**
+     * Creates an empty tube of the given capacity and with the given number
+     *
+     * @param capacity the total capacity of the tube
+     * @param number   the number of the tube
+     */
+    private Tube(int capacity, int number) {
+        this.capacity = capacity;
+        this.my_number = number;
+    }
 
     private void fillInWithColors() {
         int howMany = RandomGenerator.getDefault().nextInt(1, capacity - 1);
-        System.out.println("Filling tube with " + howMany + " colors");
+        System.out.println("Filling tube " + my_number + " with " + howMany + " colors");
         for (int i = howMany; i >= 0; i--) {
             segments.push(Color.getRandomColor());
         }
@@ -57,20 +74,33 @@ public class Tube {
     }
 
     public List<Color> getSegments() {
-        List<Color> result = new ArrayList<>(segments);
-        Collections.reverse(result);
-        return result;
+        return new ArrayList<>(segments);
     }
 
     /**
-     * True if all segments are the same color (or tube is empty).
+     * Gets the color contained in this tube.
+     *
+     * @return the color is the tube is uniform, or WHITE if the tube is empty, or null if the tube is not uniform.
+     */
+    public javafx.scene.paint.Color getColor() {
+        if (isUniform()) {
+            if (isEmpty()) {
+                return javafx.scene.paint.Color.WHITE;
+            } else {
+                return segments.peek().getJavaFXColor();
+            }
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * True if all segments are the same color or the tube is empty.
+     *
+     * @return a boolean value
      */
     public boolean isUniform() {
         return segments.isEmpty() || new HashSet<>(segments).size() == 1;
-    }
-
-    public boolean isSolved() {
-        return isEmpty() || (isFull() && isUniform());
     }
 
     /**
@@ -81,7 +111,7 @@ public class Tube {
         Iterator<Color> it = segments.iterator();
         Color top = it.next();
         int count = 1;
-        while (it.hasNext() && it.next() == top) count++;
+        while (it.hasNext() && it.next().equals(top)) count++;
         return count;
     }
 
@@ -91,12 +121,14 @@ public class Tube {
     public boolean canPourInto(Tube target) {
         if (isEmpty()) return false;
         if (target.isFull()) return false;
-        if (!target.isEmpty() && target.peek() != this.peek()) return false;
-        return true;
+        Color coul1 = target.peek();
+        Color coul2 = this.peek();
+        if (coul1 == null) return true;
+        return coul1.equals(coul2);
     }
 
     /**
-     * Pour the top run of same-colored segments into target, space permitting.
+     * Pour the top run of same-colored segments into the target, space permitting.
      */
     public void pourInto(Tube target) {
         if (!canPourInto(target)) {
@@ -114,8 +146,11 @@ public class Tube {
     @Override
     public String toString() {
         List<Color> top2bottom = new ArrayList<>(segments);
-        Collections.reverse(top2bottom); // print bottom -> top
-        return top2bottom.toString();
+        return "Tube " + top2bottom + " (cap. " + capacity + ")";
+    }
+
+    public void refreshUI() {
+        tubeView.refreshUI(this);
     }
 
 }

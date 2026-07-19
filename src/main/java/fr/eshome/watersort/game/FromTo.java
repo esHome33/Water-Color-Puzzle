@@ -12,19 +12,17 @@ public class FromTo {
     private int from;
     private int to;
 
+    public boolean accepte;
+
     public FromTo() {
         this.from = -1;
         this.to = -1;
         updateColor();
+        accepte = true;
     }
 
     // Observable color property
-    private final SimpleObjectProperty<Color> colorProperty = new SimpleObjectProperty<>();
-
-
-    public boolean isComplete() {
-        return this.from != -1 && this.to != -1;
-    }
+    private final SimpleObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(Color.GREY);
 
     public int getFrom() {
         return this.from;
@@ -41,6 +39,9 @@ public class FromTo {
      * @return true if this id could be stored in this FromTo, false otherwise
      */
     public boolean tryStoreId(int id) {
+        if (!this.accepte) {
+            return false;
+        }
         if (this.from == id) {
             return true;
         }
@@ -59,6 +60,9 @@ public class FromTo {
      * @param id an id
      */
     public void storeId(int id) {
+        if (!this.accepte) {
+            return;
+        }
         if (this.from == id) {
             this.from = -1;
             updateColor();
@@ -87,12 +91,19 @@ public class FromTo {
         if (from == -1 && to == -1)
             return Color.GREY;
         if (from == -1 || to == -1)
-            return Color.RED;
+            return Color.ORANGE;
         return Color.GREEN;
     }
 
     // Helper method to update the observable property when color changes
     private void updateColor() {
         colorProperty.set(getColor());
+    }
+
+    public void reset() {
+        from = -1;
+        to = -1;
+        updateColor();
+        accepte = true;
     }
 }
