@@ -8,9 +8,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WaterSortGame {
     private static final int NB_TUBES = 7;
@@ -18,6 +22,9 @@ public class WaterSortGame {
     private final List<Tube> tubes;
 
     private final FromTo fromTo = new FromTo();
+
+    public int countSteps = 0;
+
 
     public SimpleBooleanProperty solvedState = new SimpleBooleanProperty(false);
 
@@ -62,6 +69,35 @@ public class WaterSortGame {
         });
     }
 
+    public List<String> getStats() {
+        List<String> stats = new ArrayList<>();
+        stats.add("Nombre de tubes: " + tubes.size());
+        List<String> stats_coul = getNbCouleurs();
+        int totalColorsNumber = stats_coul.size();
+        stats.add("Nombre de couleurs: " + totalColorsNumber);
+        int nbSegments = stats_coul.stream().mapToInt(s -> Integer.parseInt(s.split(": ")[1])).sum();
+        stats.add("Nombre de segments: " + nbSegments);
+        stats.addAll(stats_coul);
+        return stats;
+    }
+
+    private List<String> getNbCouleurs() {
+        HashMap<fr.eshome.watersort.game.Color, Integer> compteurCouleurs = new HashMap<>();
+        for (Tube t : tubes) {
+            List<fr.eshome.watersort.game.Color> seg = t.getSegments();
+            for (fr.eshome.watersort.game.Color coul : seg) {
+                if (!compteurCouleurs.containsKey(coul)) {
+                    compteurCouleurs.put(coul, 1);
+                } else {
+                    compteurCouleurs.put(coul, compteurCouleurs.get(coul) + 1);
+                }
+            }
+        }
+        return compteurCouleurs.entrySet().stream()
+                .map(entry -> entry.getKey().toString() + ": " + entry.getValue())
+                .collect(Collectors.toList());
+    }
+
     public boolean move(int fromIndex, int toIndex) {
         Tube from = tubes.get(fromIndex);
         Tube to = tubes.get(toIndex);
@@ -93,5 +129,15 @@ public class WaterSortGame {
         // restart a new game
         conteneur.getChildren().clear();
         return new WaterSortGame(conteneur, colorProp);
+    }
+
+    public static void toJSON(WaterSortGame game) {
+        try {
+            FileWriter file = new FileWriter("stats.json");
+            file.write(game.getStats().toString());
+            file.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
