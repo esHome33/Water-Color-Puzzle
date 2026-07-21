@@ -9,6 +9,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -27,9 +28,10 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        game = new WaterSortGame(tubesContainer, colorProp);
+        game = WaterSortGame.createGameWithRandomTubes(tubesContainer, colorProp);
         game.solvedState.addListener(this::suiviSolution);
         winner.setVisible(false);
+        winner.setManaged(false);
         tubesContainer.minWidth(300d);
         tubesContainer.minHeight(400d);
         colorProp.setStyle("-fx-background-color: grey;");
@@ -38,14 +40,17 @@ public class GameController implements Initializable {
     }
 
     public void suiviSolution(ObservableValue<? extends Boolean> obs, Boolean oldValue, Boolean newValue) {
-        winner.setVisible(game.isSolved());
+        boolean solved = game.isSolved();
+        winner.setVisible(solved);
+        winner.setManaged(solved);
     }
 
-    public void onReloadButtonClick() {
+    public void onNewGame() {
         game.solvedState.removeListener(this::suiviSolution);
-        game = WaterSortGame.newGame(tubesContainer, colorProp);
+        game = WaterSortGame.createGameWithRandomTubes(tubesContainer, colorProp);
         game.solvedState.addListener(this::suiviSolution);
         winner.setVisible(false);
+        winner.setManaged(false);
         tubesContainer.minWidth(300d);
         tubesContainer.minHeight(400d);
         stats_lv.getItems().clear();
@@ -53,5 +58,14 @@ public class GameController implements Initializable {
     }
 
     public void onRestartSameGame() {
+        try {
+            game.returnToStartState();
+            winner.setVisible(false);
+            winner.setManaged(false);
+            stats_lv.getItems().clear();
+            stats_lv.getItems().addAll(game.getStats());
+        } catch (IOException e) {
+            System.out.println("Error loading game state: " + e.getMessage());
+        }
     }
 }

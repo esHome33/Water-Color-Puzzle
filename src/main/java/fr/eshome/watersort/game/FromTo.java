@@ -5,8 +5,10 @@ import javafx.scene.paint.Color;
 
 /**
  * This class stores the id of two tubes and determines which id is the first entered and
- * which is the second entered. The same id entered twice means that this id is removed from
- * this FromTo.
+ * which is the second entered. The same id entered twice means that this id has to be
+ * removed from this FromTo.
+ *
+ * @author eshome33 - july 2026
  */
 public class FromTo {
     private int from;
@@ -14,6 +16,9 @@ public class FromTo {
 
     public boolean accepte;
 
+    /**
+     * Create a new FromTo with no stored ids and color set to Grey.
+     */
     public FromTo() {
         this.from = -1;
         this.to = -1;
@@ -21,7 +26,9 @@ public class FromTo {
         accepte = true;
     }
 
-    // Observable color property
+    /**
+     * Observable color property: 3 colors depending on the stored ids.
+     */
     private final SimpleObjectProperty<Color> colorProperty = new SimpleObjectProperty<>(Color.GREY);
 
     public int getFrom() {
@@ -33,10 +40,10 @@ public class FromTo {
     }
 
     /**
-     * Check if this id could be stored in this FromTo.
+     * Check if this Tube id could be stored in this FromTo.
      *
-     * @param id an id
-     * @return true if this id could be stored in this FromTo, false otherwise
+     * @param id a Tube id
+     * @return true, if this id could be stored in this FromTo, false otherwise
      */
     public boolean tryStoreId(int id) {
         if (!this.accepte) {
@@ -48,16 +55,13 @@ public class FromTo {
         if (this.to == id) {
             return true;
         }
-        if (this.from == -1 || this.to == -1) {
-            return true;
-        }
-        return false;
+        return this.from == -1 || this.to == -1;
     }
 
     /**
-     * Store the given id in this FromTo.
+     * Store the given Tube id in this FromTo.
      *
-     * @param id an id
+     * @param id a Tube id
      */
     public void storeId(int id) {
         if (!this.accepte) {
@@ -82,11 +86,18 @@ public class FromTo {
         updateColor();
     }
 
-    // Getter for the observable color property
+    /**
+     * Getter for the observable color property
+     */
     public SimpleObjectProperty<Color> colorProperty() {
         return colorProperty;
     }
 
+    /**
+     * the state of from and to decides of the color.
+     *
+     * @return Green if both from and to are set, Orange if only one is set, Grey otherwise.
+     */
     public Color getColor() {
         if (from == -1 && to == -1)
             return Color.GREY;
@@ -95,11 +106,17 @@ public class FromTo {
         return Color.GREEN;
     }
 
-    // Helper method to update the observable property when color changes
+    /**
+     * Helper method to update the observable property when color changes
+     */
     private void updateColor() {
         colorProperty.set(getColor());
     }
 
+    /**
+     * Reset the FromTo object to its initial state,
+     * i.e., no tubes selected, ready to accept new tube selections and color reset to gray.
+     */
     public void reset() {
         from = -1;
         to = -1;

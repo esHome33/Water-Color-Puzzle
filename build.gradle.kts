@@ -27,7 +27,7 @@ tasks.withType<JavaCompile> {
 
 application {
     mainModule.set("fr.eshome.watersort")
-    mainClass.set("fr.eshome.watersort.HelloApplication")
+    mainClass.set("fr.eshome.watersort.GameApplication")
 }
 
 javafx {
@@ -36,7 +36,7 @@ javafx {
 }
 
 dependencies {
-    implementation("org.controlsfx:controlsfx:11.2.1")
+    implementation("com.google.code.gson:gson:2.14.0")
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junitVersion}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junitVersion}")
 }

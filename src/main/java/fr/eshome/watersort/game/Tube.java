@@ -23,10 +23,17 @@ public class Tube {
         tubeView = new TubeView(this, number, fromTo);
     }
 
-    public static Tube getEmptyTube(int capacity, int number, FromTo fromTo) {
-        Tube retour = new Tube(capacity, number);
-        retour.tubeView = new TubeView(retour, number, fromTo);
-        System.out.println("Creating empty tube " + number);
+    /**
+     * Creates an empty tube of the given capacity and with the given number (TubeView UI also created).
+     *
+     * @param capacity the total capacity of the tube
+     * @param id       the id of the tube
+     * @param fromTo   the FromTo associated with the tube
+     * @return a newly created tube and its associated UI view
+     */
+    public static Tube createEmptyTube(int capacity, int id, FromTo fromTo) {
+        Tube retour = new Tube(capacity, id);
+        retour.tubeView = new TubeView(retour, id, fromTo);
         return retour;
     }
 
@@ -73,6 +80,10 @@ public class Tube {
         return capacity;
     }
 
+    public int getNumber() {
+        return my_number;
+    }
+
     public List<Color> getSegments() {
         return new ArrayList<>(segments);
     }
@@ -80,7 +91,7 @@ public class Tube {
     /**
      * Gets the color contained in this tube.
      *
-     * @return the color is the tube is uniform, or WHITE if the tube is empty, or null if the tube is not uniform.
+     * @return the color if the tube is uniform, or WHITE if the tube is empty, or null if the tube is not uniform.
      */
     public javafx.scene.paint.Color getColor() {
         if (isUniform()) {
@@ -149,8 +160,25 @@ public class Tube {
         return "Tube " + top2bottom + " (cap. " + capacity + ")";
     }
 
-    public void refreshUI() {
-        tubeView.refreshUI(this);
+    /**
+     * Refresh this Tube's UI.
+     *
+     * @param toggle set to true if you want to toggle the selected state
+     *               of the associated TubeView
+     */
+    public void refreshUI(boolean toggle) {
+        tubeView.refreshUI(this, toggle);
     }
 
+    /**
+     * Create a tube from a list of segment colors.
+     *
+     * @param segments a list of color indexes
+     */
+    public void setSegments(ArrayList<Integer> segments) {
+        this.segments.clear();
+        for (Integer i : segments) {
+            this.segments.push(Color.values()[i]);
+        }
+    }
 }
