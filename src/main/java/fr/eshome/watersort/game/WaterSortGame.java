@@ -15,16 +15,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
 public class WaterSortGame {
     private static final String TEMP_FILE_NAME = "waterdrop_game_state.json";
     private static final int NB_TUBES = 7;
-    private static final int TAILLE_TUBES = 10;
+    static final int TAILLE_TUBES = 10;
     private final ArrayList<Tube> tubes;
 
     private final FromTo fromTo = new FromTo();
@@ -61,15 +59,35 @@ public class WaterSortGame {
     }
 
     /**
-     * Initializes the tubes with random colors
+     * Initializes NB_TUBES -3 tubes with random colors (the total quantity of
+     * colors in all tubes is globally limited to a random number of colors and a
+     * random total quantity of segments)
      */
     private void initRandomTubes() {
+        int nbTotalCouleurs = RandomGenerator.getDefault().nextInt(1, fr.eshome.watersort.game.Color.getNbColors());
+        int nbTubesNonEmpty = NB_TUBES - 3;
+        ArrayList<fr.eshome.watersort.game.Color> couleurs_a_placer = fr.eshome.watersort.game.Color.getNewGameColors(nbTotalCouleurs, nbTubesNonEmpty);
+        System.out.println("Il y a " + couleurs_a_placer.size() + " segments à placer (" + nbTotalCouleurs + " couleurs) dans " + nbTubesNonEmpty + " tubes non vides");
+        // separate this list in NB_TUBES - 3 segments ... be careful : check that the intervals are lower than capacity !
+        int[] randomIndexes = getCutIndices(couleurs_a_placer.size(), nbTubesNonEmpty);
+
+        int index = 0;
+        int idx_debut = 0;
+        int idx_fin;
         for (int i = 0; i < NB_TUBES; i++) {
             Tube t;
             if (i == 1 || i == 3 || i == 5) {
                 t = Tube.createEmptyTube(TAILLE_TUBES, i, fromTo);
             } else {
-                t = new Tube(TAILLE_TUBES, i, fromTo);
+                if (index < NB_TUBES - 4) {
+                    idx_fin = randomIndexes[index];
+                } else {
+                    idx_fin = couleurs_a_placer.size() - 1;
+                }
+                List<fr.eshome.watersort.game.Color> pour_ce_tube = couleurs_a_placer.subList(idx_debut, idx_fin + 1);
+                idx_debut = idx_fin + 1;
+                index++;
+                t = new Tube(TAILLE_TUBES, i, fromTo, pour_ce_tube);
             }
             this.tubes.add(t);
             // add all TubeViews to the ui container and connect a listener to the isSelected property
@@ -81,6 +99,33 @@ public class WaterSortGame {
         }
     }
 
+    private int[] getCutIndices(int segmentsSize, int nbTubes) {
+        Random random = new Random();
+        int[] randomIndexes;
+        do {
+            randomIndexes = random.ints(1, segmentsSize - 1)
+                    .distinct()
+                    .limit(nbTubes - 1)
+                    .toArray();
+            // sort these indexes
+            Arrays.sort(randomIndexes);
+        } while (!verifier(randomIndexes, segmentsSize));
+
+        System.out.println("Cut indices: " + Arrays.toString(randomIndexes));
+        return randomIndexes;
+    }
+
+    private boolean verifier(int[] tableau, int indexFinal) {
+        int idx_debut = 0;
+        for (int elt : tableau) {
+            int longueur = elt - idx_debut;
+            if (longueur >= TAILLE_TUBES) {
+                return false;
+            }
+            idx_debut = elt + 1;
+        }
+        return (indexFinal - idx_debut) <= TAILLE_TUBES;
+    }
 
     /**
      * Private constructor of the game: creates a new game with no tubes

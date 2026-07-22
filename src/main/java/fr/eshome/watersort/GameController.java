@@ -65,6 +65,13 @@ public class GameController implements Initializable {
         tubesContainer.minHeight(400d);
         stats_lv.getItems().clear();
         stats_lv.getItems().addAll(game.getStats());
+        txtCoups.textProperty().bind(Bindings.createStringBinding(
+                () -> {
+                    int value = game.nbCoups.get();
+                    return 1 == value ? "1 coup" : value + " coups";
+                },
+                game.nbCoups
+        ));
     }
 
     public void onRestartSameGame() {

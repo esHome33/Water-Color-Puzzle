@@ -47,7 +47,7 @@ public class TubeView extends VBox {
             Rectangle rect = new Rectangle(SEGMENT_WIDTH, SEGMENT_HEIGHT);
             rect.setArcWidth(5d);
             rect.setArcHeight(5d);
-            javafx.scene.paint.Color couleur = getColor(color);
+            javafx.scene.paint.Color couleur = color.getJavaFXColor();
             rect.setFill(couleur);
             segments.add(couleur);
             getChildren().add(rect);
@@ -75,16 +75,7 @@ public class TubeView extends VBox {
         return my_number;
     }
 
-    private javafx.scene.paint.Color getColor(Color color) {
-        return switch (color) {
-            case RED -> javafx.scene.paint.Color.RED;
-            case GREEN -> javafx.scene.paint.Color.GREEN;
-            case BLUE -> javafx.scene.paint.Color.BLUE;
-            case YELLOW -> javafx.scene.paint.Color.CHOCOLATE;
-            case ORANGE -> javafx.scene.paint.Color.ORANGE;
-            case PURPLE -> javafx.scene.paint.Color.PURPLE;
-        };
-    }
+
 
     private String colorName(javafx.scene.paint.Color color) {
         if (javafx.scene.paint.Color.RED.equals(color)) return "RED";
@@ -110,7 +101,7 @@ public class TubeView extends VBox {
             Rectangle rect = new Rectangle(SEGMENT_WIDTH, SEGMENT_HEIGHT);
             rect.setArcWidth(5d);
             rect.setArcHeight(5d);
-            javafx.scene.paint.Color couleur = getColor(color);
+            javafx.scene.paint.Color couleur = color.getJavaFXColor();
             segments.add(couleur);
             rect.setFill(couleur);
             getChildren().add(rect);

@@ -19,7 +19,14 @@ public class Tube {
     public Tube(int capacity, int number, FromTo fromTo) {
         my_number = number;
         this.capacity = capacity;
-        fillInWithColors();
+        fillWithRandomColors();
+        tubeView = new TubeView(this, number, fromTo);
+    }
+
+    public Tube(int capacity, int number, FromTo fromTo, List<Color> liste_de_couleurs) {
+        my_number = number;
+        this.capacity = capacity;
+        fillWithColors(liste_de_couleurs);
         tubeView = new TubeView(this, number, fromTo);
     }
 
@@ -48,11 +55,18 @@ public class Tube {
         this.my_number = number;
     }
 
-    private void fillInWithColors() {
-        int howMany = RANDOM.nextInt(1, capacity - 1);
-        System.out.println("Filling tube " + my_number + " with " + howMany + " colors");
-        for (int i = howMany; i >= 0; i--) {
-            segments.push(Color.getRandomColor());
+    private void fillWithRandomColors() {
+        int howManySegments = RANDOM.nextInt(1, capacity - 1);
+        int howManyColors = RANDOM.nextInt(1, 6);
+        System.out.println("Random filling tube " + my_number + " with " + howManySegments + " segments and " + howManyColors + " colors");
+        for (int i = howManySegments; i >= 0; i--) {
+            segments.push(Color.getRandomColor(howManyColors));
+        }
+    }
+
+    private void fillWithColors(List<Color> colors) {
+        for (Color c : colors) {
+            segments.push(c);
         }
     }
 
