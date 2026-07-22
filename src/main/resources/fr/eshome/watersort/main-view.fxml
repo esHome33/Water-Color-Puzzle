@@ -50,6 +50,11 @@
         </children>
     </HBox>
     <HBox fx:id="tubesContainer" alignment="CENTER" minHeight="100.0" minWidth="300.0" spacing="10.0"/>
+    <HBox alignment="CENTER" prefHeight="30.0">
+        <children>
+            <Label fx:id="txtCoups" text="0 coups joués"/>
+        </children>
+    </HBox>
     <Accordion>
         <panes>
             <TitledPane animated="true" text="Statistiques">

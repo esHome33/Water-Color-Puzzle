@@ -3,6 +3,7 @@ package fr.eshome.watersort.game;
 import fr.eshome.watersort.state.GameState;
 import fr.eshome.watersort.ui.TubeView;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
@@ -28,24 +29,13 @@ public class WaterSortGame {
 
     private final FromTo fromTo = new FromTo();
 
-    public int countSteps = 0;
+    public SimpleIntegerProperty nbCoups = new SimpleIntegerProperty(0);
     private final Pane colorPane;
     private final HBox conteneurTubesUI;
 
 
     public SimpleBooleanProperty solvedState = new SimpleBooleanProperty(false);
 
-
-    /**
-     * Creates an empty new game (without tubes). Tubes can be added later with addTube()
-     *
-     * @param ui_container    the HBox container for the tubeUI
-     * @param color_indicator the Pane for the color indicator
-     * @return the new game
-     */
-    static public WaterSortGame createGame(HBox ui_container, Pane color_indicator) {
-        return new WaterSortGame(ui_container, color_indicator);
-    }
 
     /**
      * Creates a new game with random tubes
@@ -64,6 +54,10 @@ public class WaterSortGame {
             System.out.println("Error while saving game state to JSON: " + e.getMessage());
         }
         return result;
+    }
+
+    public void setCoups(int i) {
+        nbCoups.set(i);
     }
 
     /**
@@ -98,6 +92,7 @@ public class WaterSortGame {
         // init of important variables
         this.tubes = new ArrayList<>(NB_TUBES);
         this.colorPane = colorProp;
+        this.nbCoups.set(0);
         // clear the container from any Tubes
         conteneur.getChildren().clear();
         this.conteneurTubesUI = conteneur;
@@ -123,6 +118,7 @@ public class WaterSortGame {
 
     private void executeMove(FromTo fromTo) {
         move(fromTo.getFrom(), fromTo.getTo());
+        setCoups(nbCoups.getValue() + 1);
         tubes.get(fromTo.getFrom()).refreshUI(true);
         tubes.get(fromTo.getTo()).refreshUI(true);
         fromTo.reset();

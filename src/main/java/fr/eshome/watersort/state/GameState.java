@@ -12,6 +12,7 @@ public class GameState {
     int num_of_tubes;
     int tube_capacity;
     boolean is_solved;
+    int nbCoups;
 
 
     /**
@@ -27,6 +28,7 @@ public class GameState {
             tubes.add(TubeState.fromTube(t));
         }
         is_solved = game.isSolved();
+        nbCoups = game.nbCoups.getValue();
     }
 
     /**
@@ -47,5 +49,6 @@ public class GameState {
                     (obs, oldValue, newValue) -> fromTo.storeId(tv.getNumber()));
             game.addTube(newTube);
         }
+        game.setCoups(nbCoups);
     }
 }
