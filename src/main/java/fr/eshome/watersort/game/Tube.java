@@ -3,9 +3,9 @@ package fr.eshome.watersort.game;
 import fr.eshome.watersort.ui.TubeView;
 
 import java.util.*;
-import java.util.random.RandomGenerator;
 
 public class Tube {
+    private static final Random RANDOM = new Random();
     private final Deque<Color> segments = new ArrayDeque<>(); // top = first
     private final int capacity;
     private TubeView tubeView;
@@ -49,7 +49,7 @@ public class Tube {
     }
 
     private void fillInWithColors() {
-        int howMany = RandomGenerator.getDefault().nextInt(1, capacity - 1);
+        int howMany = RANDOM.nextInt(1, capacity - 1);
         System.out.println("Filling tube " + my_number + " with " + howMany + " colors");
         for (int i = howMany; i >= 0; i--) {
             segments.push(Color.getRandomColor());

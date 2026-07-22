@@ -29,7 +29,7 @@ public class TubeView extends VBox {
     public TubeView(Tube tube, int number, FromTo fromTo) {
         my_number = number;
         setAlignment(Pos.BOTTOM_CENTER);
-        setOnMouseClicked(_ -> {
+        setOnMouseClicked(evt -> {
             if (fromTo.tryStoreId(my_number)) {
                 toggleSelect();
             }

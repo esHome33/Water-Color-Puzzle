@@ -44,7 +44,7 @@ public class GameState {
             Tube newTube = t.createTube(fromTo);
             TubeView tv = newTube.getTubeView();
             tv.isSelected.addListener(
-                    (_, _, _) -> fromTo.storeId(tv.getNumber()));
+                    (obs, oldValue, newValue) -> fromTo.storeId(tv.getNumber()));
             game.addTube(newTube);
         }
     }

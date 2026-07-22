@@ -81,7 +81,7 @@ public class WaterSortGame {
             // add all TubeViews to the ui container and connect a listener to the isSelected property
             TubeView tubeView = t.getTubeView();
             conteneurTubesUI.getChildren().add(tubeView);
-            tubeView.isSelected.addListener((_, _, _) ->
+            tubeView.isSelected.addListener((obs, oldVal, newVal) ->
                     fromTo.storeId(tubeView.getNumber())
             );
         }
