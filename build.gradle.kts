@@ -4,6 +4,7 @@ plugins {
     id("org.javamodularity.moduleplugin") version "1.8.15"
     id("org.openjfx.javafxplugin") version "0.1.0"
     id("org.beryx.jlink") version "2.25.0"
+    id("dev.hydraulic.conveyor") version "2.0"
 }
 
 group = "fr.eshome"
@@ -47,8 +48,11 @@ tasks.withType<Test> {
 
 jlink {
     imageZip.set(layout.buildDirectory.file("/distributions/app-${javafx.platform.classifier}.zip"))
-    options.set(listOf("--strip-debug", "--compress", "2", "--no-header-files", "--no-man-pages"))
+    options.set(listOf("--strip-debug", "--no-header-files", "--no-man-pages", "--add-modules", "jdk.random"))
     launcher {
         name = "watersort"
+    }
+    jpackage {
+        installerType = "deb"
     }
 }
