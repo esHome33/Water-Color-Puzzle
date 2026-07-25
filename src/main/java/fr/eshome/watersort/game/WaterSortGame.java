@@ -99,22 +99,38 @@ public class WaterSortGame {
         }
     }
 
-    private int[] getCutIndices(int segmentsSize, int nbTubes) {
+    /**
+     * To cut the range [1,upperBound] in p-1 parties, we need to find p-1
+     * random distinct indices between 1 and segmentsSize-1.
+     *
+     * @param upperBound the total number of segments to cut
+     * @param p          in how many parts we want to cut the range 0..upperBound
+     * @return an array of p-1 random distinct indices between 1 and upperBound-1
+     */
+    private int[] getCutIndices(int upperBound, int p) {
         Random random = new Random();
         int[] randomIndexes;
         do {
-            randomIndexes = random.ints(1, segmentsSize - 1)
+            randomIndexes = random.ints(1, upperBound - 1)
                     .distinct()
-                    .limit(nbTubes - 1)
+                    .limit(p - 1)
                     .toArray();
             // sort these indexes
             Arrays.sort(randomIndexes);
-        } while (!verifier(randomIndexes, segmentsSize));
+        } while (!verifier(randomIndexes, upperBound));
 
         System.out.println("Cut indices: " + Arrays.toString(randomIndexes));
         return randomIndexes;
     }
 
+    /**
+     * When cutting the range 0..totalNumberOfSegments in nbTubes-1 parts, we need to ensure that each part has
+     * at most TAILLE_TUBES size.
+     *
+     * @param tableau    the array of cut indices
+     * @param indexFinal the value of the last index (corresponds to the total number of color segments)
+     * @return true if each part has at most TAILLE_TUBES segments, false otherwise
+     */
     private boolean verifier(int[] tableau, int indexFinal) {
         int idx_debut = 0;
         for (int elt : tableau) {
@@ -130,8 +146,8 @@ public class WaterSortGame {
     /**
      * Private constructor of the game: creates a new game with no tubes
      *
-     * @param conteneur the container of the tubes
-     * @param colorProp the pane where the colors are displayed
+     * @param conteneur the UI container of the tubes
+     * @param colorProp the pane indicating what kind of moves are ready to be executed
      */
     private WaterSortGame(HBox conteneur, Pane colorProp) {
         // init of important variables
@@ -161,6 +177,13 @@ public class WaterSortGame {
         }
     }
 
+    /**
+     * Executes the move of colors between two tubes.
+     * It is the FromTo object that contains the information about the move.
+     *
+     * @param fromTo the FromTo object containing the information about the
+     *               move (id of the tube to move from and id of the tube to move to)
+     */
     private void executeMove(FromTo fromTo) {
         move(fromTo.getFrom(), fromTo.getTo());
         setCoups(nbCoups.getValue() + 1);
@@ -180,6 +203,12 @@ public class WaterSortGame {
         fromTo.colorProperty().addListener(this::colorChangeListener);
     }
 
+    /**
+     * Returns the fundamental statistics of the game (how many tubes, colors, segments,
+     * and the number of segments for each color).
+     *
+     * @return a list of strings containing the statistics of the game
+     */
     public List<String> getStats() {
         List<String> stats = new ArrayList<>();
         stats.add("Nombre de tubes: " + tubes.size());
@@ -189,9 +218,24 @@ public class WaterSortGame {
         int nbSegments = stats_coul.stream().mapToInt(s -> Integer.parseInt(s.split(": ")[1])).sum();
         stats.add("Nombre de segments: " + nbSegments);
         stats.addAll(stats_coul);
+        stats.addAll(getColorBreaks());
         return stats;
     }
 
+    private ArrayList<String> getColorBreaks() {
+        ArrayList<String> colorBreaks = new ArrayList<>();
+        for (int i = 0; i < tubes.size(); i++) {
+            Tube tube = tubes.get(i);
+            colorBreaks.add("Tube " + (i + 1) + ": " + tube.countColorBreaks());
+        }
+        return colorBreaks;
+    }
+
+    /**
+     * Returns the number of segments for each color in the game.
+     *
+     * @return a list of strings containing the number of segments for each color
+     */
     private List<String> getNbCouleurs() {
         HashMap<fr.eshome.watersort.game.Color, Integer> compteurCouleurs = new HashMap<>();
         for (Tube t : tubes) {
@@ -309,17 +353,11 @@ public class WaterSortGame {
         File gameStateFile = new File(tempDir, TEMP_FILE_NAME);
         if (!gameStateFile.exists()) {
             throw new IOException("Game state file not found in temp directory");
-        } else {
-            System.out.println("Found game state file : " + gameStateFile.getAbsolutePath());
         }
-
         // Read the JSON content
         String json = new String(Files.readAllBytes(gameStateFile.toPath()));
-
         // Convert from JSON to our data structure
         convertFromJson(json);
-
-        System.out.println("Game state loaded successfully");
     }
 
 

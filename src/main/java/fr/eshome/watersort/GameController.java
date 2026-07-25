@@ -4,6 +4,7 @@ import fr.eshome.watersort.game.WaterSortGame;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -83,6 +84,18 @@ public class GameController implements Initializable {
             stats_lv.getItems().addAll(game.getStats());
         } catch (IOException e) {
             System.out.println("Error loading game state: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Launches the creator window.
+     */
+    public void onCreatorLaunch() {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("creator-view.fxml"));
+            tubesContainer.getScene().setRoot(fxmlLoader.load());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
