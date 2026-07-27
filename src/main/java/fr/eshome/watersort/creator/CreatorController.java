@@ -51,14 +51,13 @@ public class CreatorController implements Initializable {
         preparePane(3, pane4);
         preparePane(4, pane5);
         preparePane(5, pane6);
-        tubesArray = new TubesArray(6, 10);
+        tubesArray = new TubesArray(WaterSortGame.NB_TUBES, WaterSortGame.TAILLE_TUBES);
         tubesLocation.getChildren().add(tubesArray.getUI());
 
     }
 
     private void preparePane(int id, Pane pane) {
         pane.setStyle("-fx-background-color: " + Color.getHTMLColor(id) + ";");
-        pane.setUserData(Color.getHTMLColor(id));
     }
 
     /**

@@ -13,6 +13,8 @@ public class FillableTube {
     private final int capacity;
     private final ArrayList<Color> segments;
     private final VBox container;
+    private final double myWidth = 28d;
+
 
     /**
      * Create a new fillable tube (logical structure and UI) with the given id and capacity.
@@ -26,9 +28,10 @@ public class FillableTube {
         this.segments = new ArrayList<>();
         container = new VBox();
         container.setSpacing(1);
-        container.setPrefWidth(10);
-        container.setStyle("-fx-background-color: yellow;");
-        container.setMinWidth(40d);
+        container.setMinWidth(myWidth);
+        container.setPrefWidth(myWidth);
+        container.setMaxWidth(myWidth + 5d);
+        container.setStyle("-fx-background-color: white; -fx-border-color: #ccedfc; -fx-border-radius: 4; -fx-background-radius: 4;");
         container.setMinHeight(200d);
         container.setAlignment(Pos.BOTTOM_CENTER);
     }
@@ -41,9 +44,19 @@ public class FillableTube {
     public void addColor(Color color) {
         segments.add(color);
         Pane segment = new Pane();
-        segment.setStyle("-fx-background-color: " + fr.eshome.watersort.game.Color.getHTMLColor(color));
-        segment.setMinWidth(40d);
+        String style = " -fx-background-color: "
+                + fr.eshome.watersort.game.Color.getHTMLColor(color)
+                + "; "
+                + "  -fx-border-color: "
+                + fr.eshome.watersort.game.Color.getHTMLColor(color)
+                + " ;"
+                + "  -fx-border-radius: 4 ; "
+                + "  -fx-background-radius: 4 ; ";
+        segment.setStyle(style);
         segment.setMinHeight(20d);
+        segment.setPrefSize(myWidth, 20d);
+        segment.setMaxWidth(myWidth);
+
         container.getChildren().addFirst(segment);
     }
 

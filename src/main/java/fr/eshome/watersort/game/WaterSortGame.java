@@ -22,8 +22,8 @@ import java.util.stream.Collectors;
 public class WaterSortGame {
     private static final String TEMP_FILE_NAME = "waterdrop_game_state.json";
     public static final String NEW_GAME_FILE_NAME = "new_game_state.json";
-    private static final int NB_TUBES = 7;
-    static final int TAILLE_TUBES = 10;
+    static public final int NB_TUBES = 7;
+    static public final int TAILLE_TUBES = 10;
     private final ArrayList<Tube> tubes;
 
     private final FromTo fromTo = new FromTo();
@@ -60,15 +60,19 @@ public class WaterSortGame {
         // first try to load saved game state from creator screen
         try {
             result.newGameFromSavedState();
+            System.out.println("chargé depuis creator screen saved game");
         } catch (IOException e) {
             // in case of a problem, return to the start state
             try {
                 result.returnToStartState();
+                System.out.println("chargé depuis start state");
             } catch (IOException ex) {
                 // if no start state available, create a game with random tubes
                 result = createGameWithRandomTubes(tubesContainer, colorProp);
+                System.out.println("chargé depuis random tubes");
             }
         }
+
         return result;
     }
 

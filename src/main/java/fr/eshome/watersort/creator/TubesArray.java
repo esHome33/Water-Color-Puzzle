@@ -23,10 +23,13 @@ public class TubesArray {
     private final HBox stage;
 
     public TubesArray(int numberOfTubes, int capacity) {
+        double btnSize = 28d;
         tubes = new ArrayList<>(numberOfTubes);
         stage = new HBox();
-        stage.setMinHeight(300d);
-        stage.setPrefHeight(300d);
+        stage.setMinHeight(250d);
+        stage.setPrefHeight(250d);
+        stage.setMinWidth(43d * numberOfTubes);
+        stage.setPrefWidth(46d * numberOfTubes);
         stage.setAlignment(Pos.BOTTOM_CENTER);
         stage.setSpacing(5d);
         this.capacity = capacity;
@@ -36,18 +39,28 @@ public class TubesArray {
             FillableTube tube = new FillableTube(i, capacity);
             tubes.add(tube);
             unit.setSpacing(10d);
-            unit.setMinWidth(50d);
-            unit.setMinHeight(200d);
-            unit.setStyle("-fx-border-color: blue;");
+            unit.setMinWidth(2 * btnSize + 5d);
+            unit.setMinHeight(180d);
+            unit.setPrefHeight(200d);
+            //unit.setStyle("-fx-border-color: blue;");
+            unit.setAlignment(Pos.BOTTOM_CENTER);
             // add the Tube UI to the unit
             unit.getChildren().add(tube.getUI());
             HBox buttonContainer = new HBox(5);
             buttonContainer.setAlignment(Pos.CENTER);
             buttonContainer.setStyle("-fx-border-color: black;");
             Button btnAdd = new Button("+");
+            btnAdd.setMinWidth(btnSize);
+            btnAdd.setMinHeight(btnSize);
+            btnAdd.setPrefWidth(btnSize);
+            btnAdd.setPrefHeight(btnSize);
             btnAdd.setOnAction(e -> tube.addColor(currentColor));
             Button btnDel = new Button("-");
             btnDel.setOnAction(e -> tube.removeColor());
+            btnDel.setMinWidth(btnSize);
+            btnDel.setMinHeight(btnSize);
+            btnDel.setPrefWidth(btnSize);
+            btnDel.setPrefHeight(btnSize);
             buttonContainer.getChildren().add(btnAdd);
             buttonContainer.getChildren().add(btnDel);
             // add the button container to the unit
