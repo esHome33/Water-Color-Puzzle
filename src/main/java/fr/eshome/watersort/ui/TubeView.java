@@ -76,12 +76,12 @@ public class TubeView extends VBox {
     }
 
 
-
     private String colorName(javafx.scene.paint.Color color) {
         if (javafx.scene.paint.Color.RED.equals(color)) return "RED";
         if (javafx.scene.paint.Color.GREEN.equals(color)) return "GREEN";
         if (javafx.scene.paint.Color.BLUE.equals(color)) return "BLUE";
-        if (javafx.scene.paint.Color.CHOCOLATE.equals(color)) return "CHOCOLATE";
+        if (javafx.scene.paint.Color.CHOCOLATE.equals(color) || javafx.scene.paint.Color.YELLOW.equals(color))
+            return "CHOCOLATE";
         if (javafx.scene.paint.Color.ORANGE.equals(color)) return "ORANGE";
         if (javafx.scene.paint.Color.PURPLE.equals(color)) return "PURPLE";
 

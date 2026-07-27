@@ -32,22 +32,12 @@ public class GameController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        game = WaterSortGame.createGameWithRandomTubes(tubesContainer, colorProp);
-        game.solvedState.addListener(this::suiviSolution);
-        winner.setVisible(false);
-        winner.setManaged(false);
-        tubesContainer.minWidth(300d);
-        tubesContainer.minHeight(400d);
-        colorProp.setStyle("-fx-background-color: grey;");
-        stats_lv.getItems().clear();
-        stats_lv.getItems().addAll(game.getStats());
-        txtCoups.textProperty().bind(Bindings.createStringBinding(
-                () -> {
-                    int value = game.nbCoups.get();
-                    return 1 == value ? "1 coup" : value + " coups";
-                },
-                game.nbCoups
-        ));
+        if (Switcher.startWithRandom) {
+            game = WaterSortGame.createFromSavedGame(tubesContainer, colorProp);
+        } else {
+            game = WaterSortGame.createGameWithRandomTubes(tubesContainer, colorProp);
+        }
+        initUI();
     }
 
     public void suiviSolution(ObservableValue<? extends Boolean> obs, Boolean oldValue, Boolean newValue) {
@@ -59,11 +49,16 @@ public class GameController implements Initializable {
     public void onNewGame() {
         game.solvedState.removeListener(this::suiviSolution);
         game = WaterSortGame.createGameWithRandomTubes(tubesContainer, colorProp);
+        initUI();
+    }
+
+    private void initUI() {
         game.solvedState.addListener(this::suiviSolution);
         winner.setVisible(false);
         winner.setManaged(false);
         tubesContainer.minWidth(300d);
         tubesContainer.minHeight(400d);
+        colorProp.setStyle("-fx-background-color: grey;");
         stats_lv.getItems().clear();
         stats_lv.getItems().addAll(game.getStats());
         txtCoups.textProperty().bind(Bindings.createStringBinding(
@@ -95,7 +90,9 @@ public class GameController implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("creator-view.fxml"));
             tubesContainer.getScene().setRoot(fxmlLoader.load());
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Error loading creator window: " + e.getMessage());
         }
     }
+
+
 }

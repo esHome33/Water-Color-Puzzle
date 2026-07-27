@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 public class WaterSortGame {
     private static final String TEMP_FILE_NAME = "waterdrop_game_state.json";
+    public static final String NEW_GAME_FILE_NAME = "new_game_state.json";
     private static final int NB_TUBES = 7;
     static final int TAILLE_TUBES = 10;
     private final ArrayList<Tube> tubes;
@@ -50,6 +51,23 @@ public class WaterSortGame {
             result.toJSON();
         } catch (IOException e) {
             System.out.println("Error while saving game state to JSON: " + e.getMessage());
+        }
+        return result;
+    }
+
+    public static WaterSortGame createFromSavedGame(HBox tubesContainer, Pane colorProp) {
+        WaterSortGame result = new WaterSortGame(tubesContainer, colorProp);
+        // first try to load saved game state from creator screen
+        try {
+            result.newGameFromSavedState();
+        } catch (IOException e) {
+            // in case of a problem, return to the start state
+            try {
+                result.returnToStartState();
+            } catch (IOException ex) {
+                // if no start state available, create a game with random tubes
+                result = createGameWithRandomTubes(tubesContainer, colorProp);
+            }
         }
         return result;
     }
@@ -299,6 +317,11 @@ public class WaterSortGame {
         conteneurTubesUI.getChildren().clear();
     }
 
+    /**
+     * Populate this WaterSortGame with the saved new game state contained in the json.
+     *
+     * @param json a new game state in JSON format
+     */
     private void convertFromJson(String json) {
         com.google.gson.Gson gson = new com.google.gson.Gson();
         GameState loadedState = gson.fromJson(json, GameState.class);
@@ -337,7 +360,7 @@ public class WaterSortGame {
 
 
     /**
-     * Return the game to its initial state.
+     * Return this game to its initial state (retrieved in a file in ~/waterdrop/ folder)
      *
      * @throws IOException if the game state file cannot be found or read
      */
@@ -360,5 +383,28 @@ public class WaterSortGame {
         convertFromJson(json);
     }
 
+    /**
+     * Populate this WaterSortGame with the saved new game state (in a file in ~/waterdrop/ folder)
+     *
+     * @throws IOException in case of error, reading the file
+     */
+    private void newGameFromSavedState() throws IOException {
+        tubes.clear();
+        conteneurTubesUI.getChildren().clear();
+        fromTo.reset();
+        File tempDir = new File(System.getProperty("user.home"), "waterdrop");
+        if (!tempDir.exists()) {
+            throw new IOException("App working directory not found or game state not saved yet");
+        }
+
+        File gameStateFile = new File(tempDir, NEW_GAME_FILE_NAME);
+        if (!gameStateFile.exists()) {
+            throw new IOException("New game state file not found in app working directory");
+        }
+        // Read the JSON content
+        String json = new String(Files.readAllBytes(gameStateFile.toPath()));
+        // Convert from JSON to our data structure
+        convertFromJson(json);
+    }
 
 }
