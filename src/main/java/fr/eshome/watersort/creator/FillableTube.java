@@ -101,4 +101,10 @@ public class FillableTube {
         return resu;
     }
 
+    public void replaceWith(ArrayList<fr.eshome.watersort.game.Color> couleurs) {
+        segments.clear();
+        for (fr.eshome.watersort.game.Color col : couleurs) {
+            addColor(col.getJavaFXColor());
+        }
+    }
 }

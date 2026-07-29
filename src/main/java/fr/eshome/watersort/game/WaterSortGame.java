@@ -30,6 +30,9 @@ public class WaterSortGame {
     private final FromTo fromTo = new FromTo();
 
     public SimpleIntegerProperty nbCoups = new SimpleIntegerProperty(0);
+
+    public SimpleIntegerProperty nbCouleurs = new SimpleIntegerProperty(0);
+
     private final Pane colorPane;
     private final HBox conteneurTubesUI;
 
@@ -96,6 +99,7 @@ public class WaterSortGame {
         int idx_fin;
         for (int i = 0; i < NB_TUBES; i++) {
             Tube t;
+            // let 3 tubes be empty
             if (i == 1 || i == 3 || i == 5) {
                 t = Tube.createEmptyTube(TAILLE_TUBES, i, fromTo);
             } else {
@@ -110,13 +114,14 @@ public class WaterSortGame {
                 t = new Tube(TAILLE_TUBES, i, fromTo, pour_ce_tube);
             }
             this.tubes.add(t);
-            // add all TubeViews to the ui container and connect a listener to the isSelected property
+            // add the TubeView to the UI container and connect a listener to the isSelected property
             TubeView tubeView = t.getTubeView();
             conteneurTubesUI.getChildren().add(tubeView);
             tubeView.isSelected.addListener((obs, oldVal, newVal) ->
                     fromTo.storeId(tubeView.getNumber())
             );
         }
+        countColors();
     }
 
     /**
@@ -179,7 +184,7 @@ public class WaterSortGame {
         this.conteneurTubesUI = conteneur;
         // link FromTo colorProperty with a callback that starts the pouring of one tube into another
         fromTo.colorProperty().addListener(this::colorChangeListener);
-
+        countColors();
     }
 
     /**
@@ -230,6 +235,7 @@ public class WaterSortGame {
      * @return a list of strings containing the statistics of the game
      */
     public List<String> getStats() {
+        countColors();
         List<String> stats = new ArrayList<>();
         stats.add("Nombre de tubes: " + tubes.size());
         List<String> stats_coul = getNbCouleurs();
@@ -242,6 +248,11 @@ public class WaterSortGame {
         return stats;
     }
 
+    /**
+     * Count, on each tube, how many color breaks there are.
+     *
+     * @return a list of strings containing the number of color breaks for each tube
+     */
     private ArrayList<String> getColorBreaks() {
         nbRuptures = 0;
         ArrayList<String> colorBreaks = new ArrayList<>();
@@ -260,20 +271,27 @@ public class WaterSortGame {
      * @return a list of strings containing the number of segments for each color
      */
     private List<String> getNbCouleurs() {
+        HashMap<fr.eshome.watersort.game.Color, Integer> compteurCouleurs = countColors();
+        return compteurCouleurs.entrySet().stream()
+                .map(entry -> entry.getKey().toString() + ": " + entry.getValue())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Count how many different colors and segments are in the game.
+     *
+     * @return a HashMap containing the count of each color and the number of segments for each color.
+     */
+    private HashMap<fr.eshome.watersort.game.Color, Integer> countColors() {
         HashMap<fr.eshome.watersort.game.Color, Integer> compteurCouleurs = new HashMap<>();
         for (Tube t : tubes) {
             List<fr.eshome.watersort.game.Color> seg = t.getSegments();
             for (fr.eshome.watersort.game.Color coul : seg) {
-                if (!compteurCouleurs.containsKey(coul)) {
-                    compteurCouleurs.put(coul, 1);
-                } else {
-                    compteurCouleurs.put(coul, compteurCouleurs.get(coul) + 1);
-                }
+                compteurCouleurs.merge(coul, 1, Integer::sum);
             }
         }
-        return compteurCouleurs.entrySet().stream()
-                .map(entry -> entry.getKey().toString() + ": " + entry.getValue())
-                .collect(Collectors.toList());
+        nbCouleurs.set(compteurCouleurs.size());
+        return compteurCouleurs;
     }
 
     public void move(int fromIndex, int toIndex) {
@@ -410,9 +428,11 @@ public class WaterSortGame {
         String json = new String(Files.readAllBytes(gameStateFile.toPath()));
         // Convert from JSON to our data structure
         convertFromJson(json);
+        countColors();
     }
 
     public String getStatsRuptures() {
-        return nbRuptures + " ruptures";
+        return nbRuptures + " ruptures - " + nbCouleurs.intValue() + " couleurs";
     }
+
 }

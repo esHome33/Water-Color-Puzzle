@@ -1,5 +1,7 @@
 package fr.eshome.watersort.creator;
 
+import fr.eshome.watersort.game.Tube;
+import fr.eshome.watersort.game.WaterSortGame;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -99,5 +101,20 @@ public class TubesArray {
         resu.append("\"nbCoups\":0}");
 
         return resu.toString();
+    }
+
+    /**
+     * Loads in this TubesArray the color segments from a given water sort game.
+     *
+     * @param game The WaterSortGame instance containing the tubes to be initialized with.
+     *             The game's tubes will be used to populate this TubesArray's tubes.
+     */
+    public void initWithGame(WaterSortGame game) {
+        ArrayList<Tube> gameTubes = game.getTubes();
+        for (int i = 0; i < gameTubes.size(); i++) {
+            FillableTube tube = tubes.get(i);
+            Tube gameTube = gameTubes.get(i);
+            tube.replaceWith(gameTube.getSegments());
+        }
     }
 }

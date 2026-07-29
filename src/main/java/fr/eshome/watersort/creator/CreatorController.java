@@ -53,11 +53,22 @@ public class CreatorController implements Initializable {
         preparePane(5, pane6);
         tubesArray = new TubesArray(WaterSortGame.NB_TUBES, WaterSortGame.TAILLE_TUBES);
         tubesLocation.getChildren().add(tubesArray.getUI());
-
     }
 
     private void preparePane(int id, Pane pane) {
         pane.setStyle("-fx-background-color: " + Color.getHTMLColor(id) + ";");
+    }
+
+    /**
+     * Load the initial colors from a given water sort game.
+     *
+     * @param game The WaterSortGame instance containing the tubes to be initialized with.
+     */
+    public void initWithGame(WaterSortGame game) {
+        tubesArray = new TubesArray(WaterSortGame.NB_TUBES, WaterSortGame.TAILLE_TUBES);
+        tubesArray.initWithGame(game);
+        tubesLocation.getChildren().clear();
+        tubesLocation.getChildren().add(tubesArray.getUI());
     }
 
     /**

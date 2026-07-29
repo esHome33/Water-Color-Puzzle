@@ -1,11 +1,13 @@
 package fr.eshome.watersort;
 
+import fr.eshome.watersort.creator.CreatorController;
 import fr.eshome.watersort.game.WaterSortGame;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TitledPane;
@@ -90,10 +92,13 @@ public class GameController implements Initializable {
     /**
      * Launches the creator window.
      */
-    public void onCreatorLaunch() {
+    public void launchCreatorView() {
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(GameApplication.class.getResource("creator-view.fxml"));
-            tubesContainer.getScene().setRoot(fxmlLoader.load());
+            Parent parent = fxmlLoader.load();
+            CreatorController creatorController = fxmlLoader.getController();
+            creatorController.initWithGame(game);
+            tubesContainer.getScene().setRoot(parent);
         } catch (IOException e) {
             System.out.println("Error loading creator window: " + e.getMessage());
         }

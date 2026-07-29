@@ -98,7 +98,7 @@ public class Tube {
         return my_number;
     }
 
-    public List<Color> getSegments() {
+    public ArrayList<Color> getSegments() {
         return new ArrayList<>(segments);
     }
 
