@@ -27,7 +27,7 @@
                     </ImageView>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="Départ jeu courant"/>
+                    <Tooltip text="réinitialise le jeu courant"/>
                 </tooltip>
             </Button>
             <Button mnemonicParsing="false" onAction="#onNewGame">
@@ -39,7 +39,19 @@
                     </ImageView>
                 </graphic>
                 <tooltip>
-                    <Tooltip text="Nouveau jeu"/>
+                    <Tooltip text="nouveau jeu aléatoire"/>
+                </tooltip>
+            </Button>
+            <Button mnemonicParsing="false" onAction="#onCreatorLaunch">
+                <graphic>
+                    <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@edit.png"/>
+                        </image>
+                    </ImageView>
+                </graphic>
+                <tooltip>
+                    <Tooltip text="crée un nouveau jeu"/>
                 </tooltip>
             </Button>
             <ImageView fx:id="winner" fitHeight="80.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
@@ -57,7 +69,8 @@
     </HBox>
     <Accordion>
         <panes>
-            <TitledPane animated="true" text="Statistiques">
+
+            <TitledPane fx:id="titledPane" animated="true" text="Statistiques">
                 <content>
                     <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="270.0" prefWidth="100.0">
                         <children>

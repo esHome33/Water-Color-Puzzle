@@ -195,4 +195,21 @@ public class Tube {
             this.segments.push(Color.values()[i]);
         }
     }
+
+    /**
+     * Count the number of color breaks in this tube.
+     *
+     * @return the number of color breaks
+     */
+    public int countColorBreaks() {
+        int count = 0;
+        Color previousColor = null;
+        for (Color color : segments) {
+            if (previousColor != null && !previousColor.equals(color)) {
+                count++;
+            }
+            previousColor = color;
+        }
+        return count;
+    }
 }

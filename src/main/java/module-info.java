@@ -7,6 +7,7 @@ module fr.eshome.watersort {
 
     opens fr.eshome.watersort to javafx.fxml;
     opens fr.eshome.watersort.ui to javafx.fxml, com.google.gson;
+    opens fr.eshome.watersort.creator to javafx.fxml, com.google.gson;
     opens fr.eshome.watersort.game to com.google.gson;
     opens fr.eshome.watersort.state to com.google.gson;
 

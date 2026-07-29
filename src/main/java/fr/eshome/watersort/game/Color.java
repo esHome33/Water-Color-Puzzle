@@ -29,6 +29,27 @@ public enum Color {
     }
 
     /**
+     * Translates a JavaFX color to its corresponding ordinal value of this enum.
+     *
+     * @param color the JavaFX color
+     * @return the ordinal value of the color
+     */
+    public static Integer getOrdinal(javafx.scene.paint.Color color) {
+
+        if (javafx.scene.paint.Color.RED.equals(color))
+            return 0;
+        if (javafx.scene.paint.Color.GREEN.equals(color))
+            return 1;
+        if (javafx.scene.paint.Color.BLUE.equals(color))
+            return 2;
+        if (javafx.scene.paint.Color.CHOCOLATE.equals(color))
+            return 3;
+        if (javafx.scene.paint.Color.ORANGE.equals(color))
+            return 4;
+        return 5;
+    }
+
+    /**
      * Returns the JavaFX color corresponding to this color.
      *
      * @return the JavaFX color
@@ -40,6 +61,38 @@ public enum Color {
             case BLUE -> javafx.scene.paint.Color.BLUE;
             case YELLOW -> javafx.scene.paint.Color.CHOCOLATE;
             case ORANGE -> javafx.scene.paint.Color.ORANGE;
+            default -> javafx.scene.paint.Color.PURPLE;
+        };
+    }
+
+    /**
+     * Get the JavaFX color corresponding to the given number.
+     *
+     * @param number from 0 to 5 (6 colors)
+     * @return the corresponding JavaFX color
+     */
+    static public String getHTMLColor(int number) {
+        return getHTMLColor(intToColor(number));
+    }
+
+    static public String getHTMLColor(javafx.scene.paint.Color color) {
+        int r = (int) Math.round(color.getRed() * 255.0);
+        int g = (int) Math.round(color.getGreen() * 255.0);
+        int b = (int) Math.round(color.getBlue() * 255.0);
+        return String.format("#%02x%02x%02x", r, g, b);
+    }
+
+    static public javafx.scene.paint.Color getColor(int number) {
+        return intToColor(number);
+    }
+
+    private static javafx.scene.paint.Color intToColor(int number) {
+        return switch (number) {
+            case 0 -> javafx.scene.paint.Color.RED;
+            case 1 -> javafx.scene.paint.Color.GREEN;
+            case 2 -> javafx.scene.paint.Color.BLUE;
+            case 3 -> javafx.scene.paint.Color.CHOCOLATE;
+            case 4 -> javafx.scene.paint.Color.ORANGE;
             default -> javafx.scene.paint.Color.PURPLE;
         };
     }
