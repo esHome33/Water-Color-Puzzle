@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -30,12 +31,15 @@ public class GameController implements Initializable {
     @FXML
     private HBox tubesContainer;
 
+    @FXML
+    private TitledPane titledPane;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         if (Switcher.startWithRandom) {
-            game = WaterSortGame.createFromSavedGame(tubesContainer, colorProp);
-        } else {
             game = WaterSortGame.createGameWithRandomTubes(tubesContainer, colorProp);
+        } else {
+            game = WaterSortGame.createFromSavedGame(tubesContainer, colorProp);
         }
         initUI();
     }
@@ -68,6 +72,7 @@ public class GameController implements Initializable {
                 },
                 game.nbCoups
         ));
+        titledPane.setText("Statistiques (" + game.getStatsRuptures() + ")");
     }
 
     public void onRestartSameGame() {

@@ -25,6 +25,7 @@ public class WaterSortGame {
     static public final int NB_TUBES = 7;
     static public final int TAILLE_TUBES = 10;
     private final ArrayList<Tube> tubes;
+    private int nbRuptures = 0;
 
     private final FromTo fromTo = new FromTo();
 
@@ -60,16 +61,13 @@ public class WaterSortGame {
         // first try to load saved game state from creator screen
         try {
             result.newGameFromSavedState();
-            System.out.println("chargé depuis creator screen saved game");
         } catch (IOException e) {
             // in case of a problem, return to the start state
             try {
                 result.returnToStartState();
-                System.out.println("chargé depuis start state");
             } catch (IOException ex) {
                 // if no start state available, create a game with random tubes
                 result = createGameWithRandomTubes(tubesContainer, colorProp);
-                System.out.println("chargé depuis random tubes");
             }
         }
 
@@ -245,10 +243,13 @@ public class WaterSortGame {
     }
 
     private ArrayList<String> getColorBreaks() {
+        nbRuptures = 0;
         ArrayList<String> colorBreaks = new ArrayList<>();
         for (int i = 0; i < tubes.size(); i++) {
             Tube tube = tubes.get(i);
-            colorBreaks.add("Tube " + (i + 1) + ": " + tube.countColorBreaks());
+            int rupt = tube.countColorBreaks();
+            nbRuptures += rupt;
+            colorBreaks.add("Tube " + (i + 1) + ": " + rupt);
         }
         return colorBreaks;
     }
@@ -411,4 +412,7 @@ public class WaterSortGame {
         convertFromJson(json);
     }
 
+    public String getStatsRuptures() {
+        return nbRuptures + " ruptures";
+    }
 }
