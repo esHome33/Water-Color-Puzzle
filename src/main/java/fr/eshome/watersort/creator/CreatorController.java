@@ -8,7 +8,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
@@ -25,6 +27,8 @@ public class CreatorController implements Initializable {
     @FXML
     public Button backButton;
     @FXML
+    public Button useThisGameButton;
+    @FXML
     public Pane pane1;
     @FXML
     public Pane pane2;
@@ -39,7 +43,19 @@ public class CreatorController implements Initializable {
     @FXML
     public HBox tubesLocation;
     @FXML
-    AnchorPane root;
+    public Label nbCol1;
+    @FXML
+    public Label nbCol2;
+    @FXML
+    public Label nbCol3;
+    @FXML
+    public Label nbCol4;
+    @FXML
+    public Label nbCol5;
+    @FXML
+    public Label nbCol6;
+    @FXML
+    public AnchorPane root;
 
     private TubesArray tubesArray;
 
@@ -51,14 +67,41 @@ public class CreatorController implements Initializable {
         preparePane(3, pane4);
         preparePane(4, pane5);
         preparePane(5, pane6);
-        tubesArray = new TubesArray(WaterSortGame.NB_TUBES, WaterSortGame.TAILLE_TUBES);
-        tubesLocation.getChildren().add(tubesArray.getUI());
-
     }
 
     private void preparePane(int id, Pane pane) {
         pane.setStyle("-fx-background-color: " + Color.getHTMLColor(id) + ";");
+        pane.setUserData(id); // to retrieve the color index when the parent ToggleButton is clicked
     }
+
+    /**
+     * Load the initial colors from a given water sort game.
+     *
+     * @param game The WaterSortGame instance containing the tubes to be initialized with.
+     */
+    public void initWithGame(WaterSortGame game) {
+        tubesArray = new TubesArray(WaterSortGame.NB_TUBES, WaterSortGame.TAILLE_TUBES);
+        tubesArray.initWithGame(game);
+        tubesLocation.getChildren().clear();
+        tubesLocation.getChildren().add(tubesArray.getUI());
+        mapLabelsWithTubes();
+        useThisGameButton.disableProperty().bind(tubesArray.configuration_OK.not());
+    }
+
+    /**
+     * Automatically change the labels when the number of segments of each color changes.
+     */
+    private void mapLabelsWithTubes() {
+        if (tubesArray != null && tubesArray.nbSegments != null) {
+            nbCol1.textProperty().bind(tubesArray.nbSegments.get(0).asString());
+            nbCol2.textProperty().bind(tubesArray.nbSegments.get(1).asString());
+            nbCol3.textProperty().bind(tubesArray.nbSegments.get(2).asString());
+            nbCol4.textProperty().bind(tubesArray.nbSegments.get(3).asString());
+            nbCol5.textProperty().bind(tubesArray.nbSegments.get(4).asString());
+            nbCol6.textProperty().bind(tubesArray.nbSegments.get(5).asString());
+        }
+    }
+
 
     /**
      * Change the current color for the segments.
@@ -68,13 +111,13 @@ public class CreatorController implements Initializable {
     public void chooseColor(ActionEvent actionEvent) {
         Object src = actionEvent.getSource();
         if (src instanceof ToggleButton button) {
-            // getting the index of the color from the name of the button!
-            String id = button.getId().replace("btn", "");
-            int index = Integer.parseInt(id);
-            if (index > 0 && index <= 6) {
-                tubesArray.setCurrentColor(Color.getColor(index - 1));
-            } else {
-                System.out.println(" index est pas bon : " + index);
+            // getting the index of the color from the child pane's userData!
+            Node childNode = button.getChildrenUnmodifiable().getFirst();
+            if (childNode instanceof Pane p) {
+                int index = (int) p.getUserData();
+                if (index >= 0 && index < 6) {
+                    tubesArray.setCurrentColor(Color.getColor(index));
+                }
             }
         }
     }

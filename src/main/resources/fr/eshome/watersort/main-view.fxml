@@ -42,7 +42,7 @@
                     <Tooltip text="nouveau jeu aléatoire"/>
                 </tooltip>
             </Button>
-            <Button mnemonicParsing="false" onAction="#onCreatorLaunch">
+            <Button mnemonicParsing="false" onAction="#launchCreatorView">
                 <graphic>
                     <ImageView fitHeight="35.0" fitWidth="35.0" pickOnBounds="true" preserveRatio="true">
                         <image>

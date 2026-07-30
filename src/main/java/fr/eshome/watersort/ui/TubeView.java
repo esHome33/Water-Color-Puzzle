@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The view of a Tube. It can be selected in order to receive colors or to
- * give its own top color to another tube.
+ * The view of a Tube. It can be selected to receive/give the top's colors
+ * from/to another tube.
  */
 public class TubeView extends VBox {
     private static final double SEGMENT_WIDTH = 30.0;

@@ -8,11 +8,11 @@ import fr.eshome.watersort.ui.TubeView;
 import java.util.ArrayList;
 
 public class GameState {
-    ArrayList<TubeState> tubes;
-    int num_of_tubes;
-    int tube_capacity;
-    boolean is_solved;
-    int nbCoups;
+    final ArrayList<TubeState> tubes;
+    final int num_of_tubes;
+    final int tube_capacity;
+    final boolean is_solved;
+    final int nbCoups;
 
 
     /**
@@ -23,7 +23,7 @@ public class GameState {
     public GameState(WaterSortGame game) {
         num_of_tubes = game.getNbTubes();
         tubes = new ArrayList<>(num_of_tubes);
-        tube_capacity = game.getTubeCapacity();
+        tube_capacity = WaterSortGame.TAILLE_TUBES;
         for (Tube t : game.getTubes()) {
             tubes.add(TubeState.fromTube(t));
         }

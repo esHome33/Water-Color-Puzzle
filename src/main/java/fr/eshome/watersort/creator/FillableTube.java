@@ -1,11 +1,14 @@
 package fr.eshome.watersort.creator;
 
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Pos;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class FillableTube {
 
@@ -14,7 +17,6 @@ public class FillableTube {
     private final ArrayList<Color> segments;
     private final VBox container;
     private final double myWidth = 28d;
-
 
     /**
      * Create a new fillable tube (logical structure and UI) with the given id and capacity.
@@ -56,7 +58,6 @@ public class FillableTube {
         segment.setMinHeight(20d);
         segment.setPrefSize(myWidth, 20d);
         segment.setMaxWidth(myWidth);
-
         container.getChildren().addFirst(segment);
     }
 
@@ -101,4 +102,23 @@ public class FillableTube {
         return resu;
     }
 
+    /**
+     * Replace the current color segments with the given list of colors.
+     *
+     * @param couleurs the list of colors to replace with
+     */
+    public void replaceWith(List<fr.eshome.watersort.game.Color> couleurs) {
+        segments.clear();
+        for (fr.eshome.watersort.game.Color col : couleurs) {
+            addColor(col.getJavaFXColor());
+        }
+    }
+
+    public void countColors(HashMap<Integer, SimpleIntegerProperty> nbSegments) {
+        for (Color c : segments) {
+            int colorIndex = fr.eshome.watersort.game.Color.colorToEti(c);
+            int currentCount = nbSegments.get(colorIndex).get();
+            nbSegments.get(colorIndex).set(currentCount + 1);
+        }
+    }
 }

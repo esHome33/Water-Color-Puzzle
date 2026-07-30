@@ -9,14 +9,7 @@ public enum Color {
 
     static public Color getRandomColor(int maxNumberOfColors) {
         int rnd = RandomGenerator.getDefault().nextInt(0, maxNumberOfColors);
-        return switch (rnd) {
-            case 0 -> RED;
-            case 1 -> GREEN;
-            case 2 -> BLUE;
-            case 3 -> YELLOW;
-            case 4 -> ORANGE;
-            default -> PURPLE;
-        };
+        return colorSwitcher(rnd);
     }
 
     /**
@@ -24,7 +17,7 @@ public enum Color {
      *
      * @return the number of colors
      */
-    public static int getNbColors() {
+    static public int getNbColors() {
         return 6;
     }
 
@@ -34,7 +27,7 @@ public enum Color {
      * @param color the JavaFX color
      * @return the ordinal value of the color
      */
-    public static Integer getOrdinal(javafx.scene.paint.Color color) {
+    static public Integer getOrdinal(javafx.scene.paint.Color color) {
 
         if (javafx.scene.paint.Color.RED.equals(color))
             return 0;
@@ -47,6 +40,10 @@ public enum Color {
         if (javafx.scene.paint.Color.ORANGE.equals(color))
             return 4;
         return 5;
+    }
+
+    static public int colorToEti(javafx.scene.paint.Color color) {
+        return getOrdinal(color);
     }
 
     /**
@@ -65,16 +62,40 @@ public enum Color {
         };
     }
 
+
     /**
-     * Get the JavaFX color corresponding to the given number.
+     * Returns the fr.eshome.watersort.game.Color corresponding to the given number.
      *
-     * @param number from 0 to 5 (6 colors)
-     * @return the corresponding JavaFX color
+     * @param number an integer from 0 to 5 (6 colors)
+     * @return the corresponding Color
+     */
+    static private Color colorSwitcher(int number) {
+        return switch (number) {
+            case 0 -> RED;
+            case 1 -> GREEN;
+            case 2 -> BLUE;
+            case 3 -> YELLOW;
+            case 4 -> ORANGE;
+            default -> PURPLE;
+        };
+    }
+
+    /**
+     * Get the JavaFX color, in HTML format, corresponding to the given number.
+     *
+     * @param number the ordinal from 0 to 5 (6 colors)
+     * @return the corresponding HTML format (#rrggbb)
      */
     static public String getHTMLColor(int number) {
         return getHTMLColor(intToColor(number));
     }
 
+    /**
+     * Translates a JavFX Color to HTML format (#rrggbb).
+     *
+     * @param color a JavaFX Color
+     * @return the corresponding HTML format (#rrggbb)
+     */
     static public String getHTMLColor(javafx.scene.paint.Color color) {
         int r = (int) Math.round(color.getRed() * 255.0);
         int g = (int) Math.round(color.getGreen() * 255.0);
@@ -82,11 +103,23 @@ public enum Color {
         return String.format("#%02x%02x%02x", r, g, b);
     }
 
+    /**
+     * Returns the JavaFX Color corresponding to the given number.
+     *
+     * @param number the ordinal from 0 to 5 (6 colors)
+     * @return the corresponding JavaFX Color
+     */
     static public javafx.scene.paint.Color getColor(int number) {
         return intToColor(number);
     }
 
-    private static javafx.scene.paint.Color intToColor(int number) {
+    /**
+     * Returns the JavaFX Color corresponding to the given number.
+     *
+     * @param number the ordinal from 0 to 5 (6 colors)
+     * @return the corresponding JavaFX Color
+     */
+    static private javafx.scene.paint.Color intToColor(int number) {
         return switch (number) {
             case 0 -> javafx.scene.paint.Color.RED;
             case 1 -> javafx.scene.paint.Color.GREEN;
@@ -106,7 +139,7 @@ public enum Color {
      * @param numberOfTubes  how many non-empty tubes we want in our game
      * @return a collection of colors that can be poured into the numberOfTubes tubes.
      */
-    public static ArrayList<Color> getNewGameColors(int numberOfColors, int numberOfTubes) {
+    static public ArrayList<Color> getNewGameWithRandomColors(int numberOfColors, int numberOfTubes) {
         // first determine how many segments we can host in this number of tubes, but
         // we must not exceed the total number of segments in each tube (set to 10 in WaterSortGame.TAILLE_TUBES)
         int maxNumOfSegments = numberOfTubes * WaterSortGame.TAILLE_TUBES;

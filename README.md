@@ -17,7 +17,7 @@
 ### Installation pour développer ###
 
 * s'assurer d'avoir installé Java 21 et JavaFX 21 sur son ordinateur
-* dans un terminal,clôner ce dépôt chez soi :
+* dans un terminal, clôner ce dépôt chez soi :
 
 ```bash 
 git clone https://github.com/esHome33/Water-Color-Puzzle.git
