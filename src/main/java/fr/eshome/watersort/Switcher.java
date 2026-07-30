@@ -1,7 +1,8 @@
 package fr.eshome.watersort;
 
 /**
- * A global static class to store the startWithRandom value and can be accessed in all the controllers.
+ * A global class to store the static startWithRandom value.
+ * This class can be accessed in all the controllers and shares the value between them.
  *
  * @author eshome33
  */

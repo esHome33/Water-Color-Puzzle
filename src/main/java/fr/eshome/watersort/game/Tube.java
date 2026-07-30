@@ -5,23 +5,10 @@ import fr.eshome.watersort.ui.TubeView;
 import java.util.*;
 
 public class Tube {
-    private static final Random RANDOM = new Random();
     private final Deque<Color> segments = new ArrayDeque<>(); // top = first
     private final int capacity;
     private TubeView tubeView;
     private final int my_number;
-
-    /**
-     * Create a tube of the given capacity, fully filled with random colors
-     *
-     * @param capacity the number of different spots of color in this tube
-     */
-    public Tube(int capacity, int number, FromTo fromTo) {
-        my_number = number;
-        this.capacity = capacity;
-        fillWithRandomColors();
-        tubeView = new TubeView(this, number, fromTo);
-    }
 
     public Tube(int capacity, int number, FromTo fromTo, List<Color> liste_de_couleurs) {
         my_number = number;
@@ -38,7 +25,7 @@ public class Tube {
      * @param fromTo   the FromTo associated with the tube
      * @return a newly created tube and its associated UI view
      */
-    public static Tube createEmptyTube(int capacity, int id, FromTo fromTo) {
+    static public  Tube createEmptyTube(int capacity, int id, FromTo fromTo) {
         Tube retour = new Tube(capacity, id);
         retour.tubeView = new TubeView(retour, id, fromTo);
         return retour;
@@ -55,15 +42,10 @@ public class Tube {
         this.my_number = number;
     }
 
-    private void fillWithRandomColors() {
-        int howManySegments = RANDOM.nextInt(1, capacity - 1);
-        int howManyColors = RANDOM.nextInt(1, 6);
-        System.out.println("Random filling tube " + my_number + " with " + howManySegments + " segments and " + howManyColors + " colors");
-        for (int i = howManySegments; i >= 0; i--) {
-            segments.push(Color.getRandomColor(howManyColors));
-        }
-    }
-
+    /**
+     * Fill this tube with the given colors
+     * @param colors a list of colors
+     */
     private void fillWithColors(List<Color> colors) {
         for (Color c : colors) {
             segments.push(c);
@@ -112,7 +94,15 @@ public class Tube {
             if (isEmpty()) {
                 return javafx.scene.paint.Color.WHITE;
             } else {
-                return segments.peek().getJavaFXColor();
+                Color seg = segments.peek();
+                if (seg != null) {
+                    return seg.getJavaFXColor();
+                } else {
+                    // no segments: it means the tube is empty ...
+                    // it was already checked before, but the IDE did not see!
+                    // so let's repeat ...
+                    return javafx.scene.paint.Color.WHITE;
+                }
             }
         } else {
             return null;
@@ -143,20 +133,20 @@ public class Tube {
     /**
      * Can we pour from this tube into the given target tube?
      */
-    public boolean canPourInto(Tube target) {
-        if (isEmpty()) return false;
-        if (target.isFull()) return false;
+    public boolean cannotPourInto(Tube target) {
+        if (isEmpty()) return true;
+        if (target.isFull()) return true;
         Color coul1 = target.peek();
         Color coul2 = this.peek();
-        if (coul1 == null) return true;
-        return coul1.equals(coul2);
+        if (coul1 == null) return false;
+        return !coul1.equals(coul2);
     }
 
     /**
      * Pour the top run of same-colored segments into the target, space permitting.
      */
     public void pourInto(Tube target) {
-        if (!canPourInto(target)) {
+        if (cannotPourInto(target)) {
             throw new IllegalStateException("Illegal pour");
         }
         Color color = this.peek();

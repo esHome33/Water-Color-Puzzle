@@ -7,9 +7,9 @@ import fr.eshome.watersort.game.Tube;
 import java.util.ArrayList;
 
 public class TubeState {
-    ArrayList<Integer> segments;
-    int capacity;
-    int number;
+    final ArrayList<Integer> segments;
+    final int capacity;
+    final int number;
 
     /**
      * Create a tube state from tube properties.
@@ -18,6 +18,7 @@ public class TubeState {
      * @param segments the list of colors indexes in the tube
      * @param number   the id of the tube
      */
+    @SuppressWarnings("unchecked")
     public TubeState(int capacity, ArrayList<Integer> segments, int number) {
         this.capacity = capacity;
         this.segments = (ArrayList<Integer>) segments.clone();

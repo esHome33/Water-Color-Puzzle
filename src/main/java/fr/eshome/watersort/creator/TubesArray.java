@@ -2,6 +2,8 @@ package fr.eshome.watersort.creator;
 
 import fr.eshome.watersort.game.Tube;
 import fr.eshome.watersort.game.WaterSortGame;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -10,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * This class is a UI container (HBox) for FillableTubes. It contains a list of FillableTubes.
@@ -24,9 +27,21 @@ public class TubesArray {
      */
     private final HBox stage;
 
+    /**
+     * A map containing the number of segments for each color.
+     */
+    public HashMap<Integer, SimpleIntegerProperty> nbSegments;
+
+    /**
+     * A property indicating if the configuration of the different colors is OK (true if
+     * the number of all colors is minus or equal to the capacity)
+     */
+    public final SimpleBooleanProperty configuration_OK = new SimpleBooleanProperty(false);
+
     public TubesArray(int numberOfTubes, int capacity) {
         double btnSize = 28d;
         tubes = new ArrayList<>(numberOfTubes);
+        initializeSegments(numberOfTubes);
         stage = new HBox();
         stage.setMinHeight(250d);
         stage.setPrefHeight(250d);
@@ -56,9 +71,15 @@ public class TubesArray {
             btnAdd.setMinHeight(btnSize);
             btnAdd.setPrefWidth(btnSize);
             btnAdd.setPrefHeight(btnSize);
-            btnAdd.setOnAction(e -> tube.addColor(currentColor));
+            btnAdd.setOnAction(e -> {
+                tube.addColor(currentColor);
+                countColors();
+            });
             Button btnDel = new Button("-");
-            btnDel.setOnAction(e -> tube.removeColor());
+            btnDel.setOnAction(e -> {
+                tube.removeColor();
+                countColors();
+            });
             btnDel.setMinWidth(btnSize);
             btnDel.setMinHeight(btnSize);
             btnDel.setPrefWidth(btnSize);
@@ -71,6 +92,33 @@ public class TubesArray {
             stage.getChildren().add(unit);
             HBox.setMargin(stage, new Insets(5, 5, 20, 5));
         }
+    }
+
+    private void initializeSegments(int numberOfTubes) {
+        nbSegments = new HashMap<>();
+        for (int i = 0; i < numberOfTubes; i++) {
+            nbSegments.put(i, new SimpleIntegerProperty(0));
+        }
+    }
+
+    private void countColors() {
+        // reset all counters
+        for (int i = 0; i < nbSegments.size(); i++) {
+            nbSegments.get(i).set(0);
+        }
+        // count each color in each tube
+        for (FillableTube tube : tubes) {
+            tube.countColors(nbSegments);
+        }
+        // check if the configuration is OK
+        boolean configOK = true;
+        for (int i = 0; i < nbSegments.size(); i++) {
+            if (capacity < nbSegments.get(i).get()) {
+                configOK = false;
+                break;
+            }
+        }
+        configuration_OK.set(configOK);
     }
 
     public void setCurrentColor(Color color) {
@@ -104,7 +152,7 @@ public class TubesArray {
     }
 
     /**
-     * Loads in this TubesArray the color segments from a given water sort game.
+     * Copies all the segments from a given water sort game.
      *
      * @param game The WaterSortGame instance containing the tubes to be initialized with.
      *             The game's tubes will be used to populate this TubesArray's tubes.
@@ -114,7 +162,9 @@ public class TubesArray {
         for (int i = 0; i < gameTubes.size(); i++) {
             FillableTube tube = tubes.get(i);
             Tube gameTube = gameTubes.get(i);
-            tube.replaceWith(gameTube.getSegments());
+            tube.replaceWith(gameTube.getSegments().reversed());
         }
+        // refresh the segment's count
+        countColors();
     }
 }

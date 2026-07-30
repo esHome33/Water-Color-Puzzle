@@ -19,9 +19,13 @@ import java.util.*;
 import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 
+/**
+ * Represents a Water Sort game logic. It is backed by a GameState object when
+ * storing to file is needed.
+ */
 public class WaterSortGame {
-    private static final String TEMP_FILE_NAME = "waterdrop_game_state.json";
-    public static final String NEW_GAME_FILE_NAME = "new_game_state.json";
+    static private final String TEMP_FILE_NAME = "waterdrop_game_state.json";
+    static public final String NEW_GAME_FILE_NAME = "new_game_state.json";
     static public final int NB_TUBES = 7;
     static public final int TAILLE_TUBES = 10;
     private final ArrayList<Tube> tubes;
@@ -29,15 +33,15 @@ public class WaterSortGame {
 
     private final FromTo fromTo = new FromTo();
 
-    public SimpleIntegerProperty nbCoups = new SimpleIntegerProperty(0);
+    public final SimpleIntegerProperty nbCoups = new SimpleIntegerProperty(0);
 
-    public SimpleIntegerProperty nbCouleurs = new SimpleIntegerProperty(0);
+    public final SimpleIntegerProperty nbCouleurs = new SimpleIntegerProperty(0);
 
     private final Pane colorPane;
     private final HBox conteneurTubesUI;
 
 
-    public SimpleBooleanProperty solvedState = new SimpleBooleanProperty(false);
+    public final SimpleBooleanProperty solvedState = new SimpleBooleanProperty(false);
 
 
     /**
@@ -49,6 +53,7 @@ public class WaterSortGame {
      */
     static public WaterSortGame createGameWithRandomTubes(HBox ui_container, Pane color_indicator) {
         WaterSortGame result = new WaterSortGame(ui_container, color_indicator);
+        // fill with random color tubes
         result.initRandomTubes();
         // save initial state of the game
         try {
@@ -56,6 +61,8 @@ public class WaterSortGame {
         } catch (IOException e) {
             System.out.println("Error while saving game state to JSON: " + e.getMessage());
         }
+        // count the segments and the colors
+        result.countColors();
         return result;
     }
 
@@ -73,7 +80,8 @@ public class WaterSortGame {
                 result = createGameWithRandomTubes(tubesContainer, colorProp);
             }
         }
-
+        // count the segments and the colors
+        result.countColors();
         return result;
     }
 
@@ -89,8 +97,7 @@ public class WaterSortGame {
     private void initRandomTubes() {
         int nbTotalCouleurs = RandomGenerator.getDefault().nextInt(1, fr.eshome.watersort.game.Color.getNbColors());
         int nbTubesNonEmpty = NB_TUBES - 3;
-        ArrayList<fr.eshome.watersort.game.Color> couleurs_a_placer = fr.eshome.watersort.game.Color.getNewGameColors(nbTotalCouleurs, nbTubesNonEmpty);
-        System.out.println("Il y a " + couleurs_a_placer.size() + " segments à placer (" + nbTotalCouleurs + " couleurs) dans " + nbTubesNonEmpty + " tubes non vides");
+        ArrayList<fr.eshome.watersort.game.Color> couleurs_a_placer = fr.eshome.watersort.game.Color.getNewGameWithRandomColors(nbTotalCouleurs, nbTubesNonEmpty);
         // separate this list in NB_TUBES - 3 segments ... be careful: check that the intervals are lower than capacity!
         int[] randomIndexes = getCutIndices(couleurs_a_placer.size(), nbTubesNonEmpty);
 
@@ -121,7 +128,6 @@ public class WaterSortGame {
                     fromTo.storeId(tubeView.getNumber())
             );
         }
-        countColors();
     }
 
     /**
@@ -184,7 +190,6 @@ public class WaterSortGame {
         this.conteneurTubesUI = conteneur;
         // link FromTo colorProperty with a callback that starts the pouring of one tube into another
         fromTo.colorProperty().addListener(this::colorChangeListener);
-        countColors();
     }
 
     /**
@@ -282,7 +287,7 @@ public class WaterSortGame {
      *
      * @return a HashMap containing the count of each color and the number of segments for each color.
      */
-    private HashMap<fr.eshome.watersort.game.Color, Integer> countColors() {
+    public HashMap<fr.eshome.watersort.game.Color, Integer> countColors() {
         HashMap<fr.eshome.watersort.game.Color, Integer> compteurCouleurs = new HashMap<>();
         for (Tube t : tubes) {
             List<fr.eshome.watersort.game.Color> seg = t.getSegments();
@@ -297,7 +302,7 @@ public class WaterSortGame {
     public void move(int fromIndex, int toIndex) {
         Tube from = tubes.get(fromIndex);
         Tube to = tubes.get(toIndex);
-        if (!from.canPourInto(to)) return;
+        if (from.cannotPourInto(to)) return;
         from.pourInto(to);
     }
 
@@ -320,10 +325,6 @@ public class WaterSortGame {
 
     public ArrayList<Tube> getTubes() {
         return tubes;
-    }
-
-    public int getTubeCapacity() {
-        return TAILLE_TUBES;
     }
 
     /**
@@ -366,7 +367,7 @@ public class WaterSortGame {
         // Convert the state to JSON
         String json = convertToJson();
         // Write to file
-        Files.write(gameStateFile, json.getBytes());
+        Files.writeString(gameStateFile, json);
         System.out.println("Game state saved to: " + gameStateFile);
     }
 
@@ -428,7 +429,8 @@ public class WaterSortGame {
         String json = new String(Files.readAllBytes(gameStateFile.toPath()));
         // Convert from JSON to our data structure
         convertFromJson(json);
-        countColors();
+        // copy this json into TEMP
+        Files.writeString(new File(tempDir, TEMP_FILE_NAME).toPath(), json);
     }
 
     public String getStatsRuptures() {
