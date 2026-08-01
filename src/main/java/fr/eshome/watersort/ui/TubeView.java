@@ -3,9 +3,12 @@ package fr.eshome.watersort.ui;
 import fr.eshome.watersort.game.Color;
 import fr.eshome.watersort.game.FromTo;
 import fr.eshome.watersort.game.Tube;
+import fr.eshome.watersort.game.WaterSortGame;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 
@@ -24,46 +27,69 @@ public class TubeView extends VBox {
 
     private final int my_number;
 
+    private final VBox innerVBox;
+
     public final BooleanProperty isSelected = new SimpleBooleanProperty(false);
 
     public TubeView(Tube tube, int number, FromTo fromTo) {
         my_number = number;
+        Label labelId = new Label(String.valueOf(number + 1));
+        labelId.setStyle("-fx-font-size: 9px; -fx-font-weight: bold; -fx-font-style: italic;");
+        innerVBox = new VBox();
+        getChildren().add(innerVBox);
+        getChildren().add(labelId);
         setAlignment(Pos.BOTTOM_CENTER);
         setOnMouseClicked(evt -> {
             if (fromTo.tryStoreId(my_number)) {
                 toggleSelect();
             }
         });
-        setSpacing(1.0);
-        setMinWidth(SEGMENT_WIDTH + 2d);
-        setMinHeight(SEGMENT_HEIGHT * 11 + 1d);
-        setStyle("-fx-border-color: white;" +
+        segments = new ArrayList<>();
+        settingsForInnerVBox(innerVBox, tube);
+        setSpacing(3.0);
+        setMinWidth(SEGMENT_WIDTH + 4d);
+        setMinHeight(SEGMENT_HEIGHT * 11 + 20d);
+    }
+
+    /**
+     * Drawing the tube (inner VBox)
+     *
+     * @param box  the inner VBox
+     * @param tube the tube to draw
+     */
+    private void settingsForInnerVBox(VBox box, Tube tube) {
+        box.setAlignment(Pos.BOTTOM_CENTER);
+        box.setSpacing(1.0);
+        box.setMinWidth(SEGMENT_WIDTH + 2d);
+        box.setMinHeight(SEGMENT_HEIGHT * (WaterSortGame.TAILLE_TUBES + 1));
+        box.setStyle("-fx-border-color: white;" +
                 "-fx-border-width: 2;" +
                 "-fx-border-radius: 10;" +
                 "-fx-background-radius: 10;" +
                 "-fx-background-color: white;");
-        segments = new ArrayList<>();
+        // set padding
+        box.setPadding(new Insets(0, 1, 2, 1));
         for (Color color : tube.getSegments()) {
-            Rectangle rect = new Rectangle(SEGMENT_WIDTH, SEGMENT_HEIGHT);
+            Rectangle rect = new Rectangle(SEGMENT_WIDTH - 1d, SEGMENT_HEIGHT);
             rect.setArcWidth(5d);
             rect.setArcHeight(5d);
             javafx.scene.paint.Color couleur = color.getJavaFXColor();
             rect.setFill(couleur);
             segments.add(couleur);
-            getChildren().add(rect);
+            box.getChildren().add(rect);
         }
     }
 
     public void toggleSelect() {
         isSelected.setValue(!isSelected.getValue());
         if (isSelected.getValue()) {
-            setStyle("-fx-border-color: blue;" +
+            innerVBox.setStyle("-fx-border-color: blue;" +
                     "-fx-border-width: 2;" +
                     "-fx-border-radius: 10;" +
                     "-fx-background-radius: 10;" +
                     "-fx-background-color: white;");
         } else {
-            setStyle("-fx-border-color: white;" +
+            innerVBox.setStyle("-fx-border-color: white;" +
                     "-fx-border-width: 2;" +
                     "-fx-border-radius: 10;" +
                     "-fx-background-radius: 10;" +
@@ -95,16 +121,16 @@ public class TubeView extends VBox {
      * @param toggle set to true if you want to toggle the selection state of this TubeView
      */
     public void refreshUI(Tube tube, boolean toggle) {
-        getChildren().clear();
+        innerVBox.getChildren().clear();
         segments.clear();
         for (Color color : tube.getSegments()) {
-            Rectangle rect = new Rectangle(SEGMENT_WIDTH, SEGMENT_HEIGHT);
+            Rectangle rect = new Rectangle(SEGMENT_WIDTH - 1d, SEGMENT_HEIGHT);
             rect.setArcWidth(5d);
             rect.setArcHeight(5d);
             javafx.scene.paint.Color couleur = color.getJavaFXColor();
-            segments.add(couleur);
             rect.setFill(couleur);
-            getChildren().add(rect);
+            segments.add(couleur);
+            innerVBox.getChildren().add(rect);
         }
         if (toggle) toggleSelect();
     }

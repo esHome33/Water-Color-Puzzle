@@ -4,7 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<VBox alignment="CENTER" minHeight="600.0" minWidth="570.0" prefHeight="600.0" prefWidth="570.0" spacing="20.0"
+<VBox alignment="TOP_CENTER" minHeight="600.0" minWidth="570.0" prefHeight="600.0" prefWidth="570.0" spacing="20.0"
       xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="fr.eshome.watersort.GameController">
     <padding>
@@ -12,6 +12,7 @@
     </padding>
     <HBox alignment="CENTER" minHeight="40.0" minWidth="300.0" spacing="20.0">
         <children>
+            <Button mnemonicParsing="false" onAction="#copyGameState" text="copy"/>
             <Pane fx:id="colorProp" maxHeight="20.0" minHeight="20.0" prefHeight="10.0" prefWidth="20.0"
                   style="-fx-border-style: solid; -fx-border-color: black; -fx-border-radius: 5;">
                 <HBox.margin>
@@ -54,7 +55,7 @@
                     <Tooltip text="crée un nouveau jeu"/>
                 </tooltip>
             </Button>
-            <ImageView fx:id="winner" fitHeight="80.0" fitWidth="120.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="winner" fitHeight="51.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                     <Image url="@gagne.png"/>
                 </image>

@@ -12,6 +12,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TitledPane;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
@@ -60,8 +62,10 @@ public class GameController implements Initializable {
 
     private void initUI() {
         game.solvedState.addListener(this::suiviSolution);
-        winner.setVisible(false);
-        winner.setManaged(false);
+        if (!game.isSolved()) {
+            winner.setVisible(false);
+            winner.setManaged(false);
+        }
         tubesContainer.minWidth(300d);
         tubesContainer.minHeight(400d);
         colorProp.setStyle("-fx-background-color: grey;");
@@ -105,4 +109,14 @@ public class GameController implements Initializable {
     }
 
 
+    /**
+     * Copies the current game state to the clipboard.
+     */
+    public void copyGameState() {
+        String myGame = game.getStringContent();
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(myGame);
+        clipboard.setContent(content);
+    }
 }
