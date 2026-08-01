@@ -51,4 +51,13 @@ public class TubeState {
         tube.refreshUI(false);
         return tube;
     }
+
+    /**
+     * Get the segments of the tube as a string containing the colors indexes.
+     *
+     * @return the segments of the tube as a string
+     */
+    public String segmentsString() {
+        return segments.toString();
+    }
 }

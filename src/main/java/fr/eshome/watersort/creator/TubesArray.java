@@ -145,10 +145,23 @@ public class TubesArray {
         resu.append("\"tube_capacity\":");
         resu.append(capacity);
         resu.append(",");
-        resu.append("\"is_solved\":false,");
+        resu.append("\"is_solved\":").append(isSolved()).append(",");
         resu.append("\"nbCoups\":0}");
 
         return resu.toString();
+    }
+
+    /**
+     * Check if the game is solved.
+     *
+     * @return true if the game is solved, false otherwise.
+     */
+    private boolean isSolved() {
+        for (FillableTube tube : tubes) {
+            if (!tube.isSolved())
+                return false;
+        }
+        return true;
     }
 
     /**

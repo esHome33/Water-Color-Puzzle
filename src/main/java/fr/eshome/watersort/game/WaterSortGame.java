@@ -437,4 +437,13 @@ public class WaterSortGame {
         return nbRuptures + " ruptures - " + nbCouleurs.intValue() + " couleurs";
     }
 
+    /**
+     * Get the list of colors in all the tubes (for example [1, 1][][2, 2] is a solved game)
+     *
+     * @return the color game state as a string
+     */
+    public String getStringContent() {
+        GameState state = new GameState(this);
+        return state.getStringContent();
+    }
 }

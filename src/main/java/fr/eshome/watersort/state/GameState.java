@@ -41,6 +41,9 @@ public class GameState {
         game.clearUIContainer();
         FromTo fromTo = game.getFromTo();
         fromTo.reset();
+        if (is_solved) {
+            fromTo.accepte = false;
+        }
         game.reloadColorChangeListener();
         for (TubeState t : tubes) {
             Tube newTube = t.createTube(fromTo);
@@ -50,5 +53,18 @@ public class GameState {
             game.addTube(newTube);
         }
         game.setCoups(nbCoups);
+        game.solvedState.set(is_solved);
+    }
+
+    /**
+     * Get the color game state as a string.
+     *
+     * @return the color game state as a string
+     */
+    public String getStringContent() {
+        StringBuilder sb = new StringBuilder();
+        for (TubeState t : tubes)
+            sb.append(t.segmentsString());
+        return sb.toString();
     }
 }

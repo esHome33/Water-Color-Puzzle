@@ -121,4 +121,19 @@ public class FillableTube {
             nbSegments.get(colorIndex).set(currentCount + 1);
         }
     }
+
+    /**
+     * If the number of different colors is greater than 1, the game is not solved.
+     *
+     * @return true if the game is solved, false otherwise.
+     */
+    public boolean isSolved() {
+        HashMap<Color, Integer> colorCounts = new HashMap<>();
+        for (Color c : segments) {
+            colorCounts.put(c, colorCounts.getOrDefault(c, 0) + 1);
+            if (colorCounts.size() > 1)
+                return false;
+        }
+        return true;
+    }
 }
