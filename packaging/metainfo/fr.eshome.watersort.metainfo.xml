@@ -29,6 +29,8 @@
 
     <launchable type="desktop-id">fr.eshome.watersort.desktop</launchable>
 
+    <icon type="stock">watersort</icon>
+
     <screenshots>
         <screenshot type="default">
             <image>https://raw.githubusercontent.com/esHome33/Water-Color-Puzzle/refs/heads/main/screenshots/img1.png
@@ -53,6 +55,7 @@
     <content_rating type="oars-1.1"/>
 
     <releases>
+        <release version="1.2.3" date="2026-08-02"/>
         <release version="1.2.2" date="2026-08-02">
             <description>
                 <p>This release has the same gameplay as previous versions:</p>
