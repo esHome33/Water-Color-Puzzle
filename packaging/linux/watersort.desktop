@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Water Sort
 Comment=A water sort puzzle game
-Exec=watersort
+Exec=/opt/watersort/bin/watersort
 Icon=watersort
 Terminal=false
 Type=Application
