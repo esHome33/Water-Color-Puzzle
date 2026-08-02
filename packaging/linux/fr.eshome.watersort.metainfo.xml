@@ -63,7 +63,7 @@
                 </ul>
             </description>
         </release>
-        <release version="1.2.1" date="2026-07-30" type="dev"/>
+        <release version="1.2.1" date="2026-07-30" type="development"/>
     </releases>
 
     <categories>
