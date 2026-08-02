@@ -35,13 +35,40 @@ cd ./Water-Color-Puzzle
 ./gradlew :run
 ```
 
+### Génération des packages pour Windows et Debian Linux ###
+
+Sur une machine Linux, pour produire un package Debian, exécuter la commande suivante :
+
+```bash
+./gradlew clean jpackage
+```
+
+Cette commande générera un fichier `*.deb` dans le répertoire `build/jpackage` qui est directement installable avec la
+commande :
+
+```bash
+sudo apt install ./build/jpackage/*.deb
+```
+
+Une notification survient à l'issue de cette exécution et n'est pas importante (<code>Le téléchargement est effectué en
+dehors du bac à sable en tant que superutilisateur</code>)
+
+Pour créer le package zip pour Windows, utiliser conveyor :
+
+```bash
+conveyor make windows-zip
+```
+
+Si vous développez sous windows, attention, il va falloir reprendre le script `build.gradle.kts` car il est actuellement
+optimisé pour Linux.
+
 <i>Ce jeu est développé par ESHome33 en Java 21, JavaFX 21, Gradle avec l'IDE de JetBrains IntelliJ IDEA.</i>
 
 ### Installation pour jouer ###
 
 Aller
 sur [https://github.com/esHome33/Water-Color-Puzzle/releases](https://github.com/esHome33/Water-Color-Puzzle/releases)
-et télécharger l'archive zip qui convient à votre système d'exploitation.
+et télécharger l'archive zip ou deb qui convient à votre système d'exploitation.
 
 Cette archive contient le programme exécutable, ainsi que le runtime Java et JavaFX : l'exécution du programme
 fonctionnera même si vous n'avez pas installé Java et JavaFX sur votre ordinateur.

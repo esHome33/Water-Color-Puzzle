@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "fr.eshome"
-version = "1.2.2"
+version = "1.2.3"
 
 repositories {
     mavenCentral()
@@ -53,6 +53,77 @@ jlink {
         name = "watersort"
     }
     jpackage {
+        var currentOs = org.gradle.internal.os.OperatingSystem.current()
+        var imgType = if (currentOs.isWindows) "ico" else "png"
         installerType = "deb"
+        installerOptions = listOf(
+            "--linux-deb-maintainer", "eshome.fr@gmail.com",
+            "--linux-package-name", "watersort",
+            "--linux-app-category", "Game;LogicGame;",
+            "--vendor", "ESHome33",
+            "--description", "A water sort puzzle game",
+            "--copyright", "Copyright © 2026 ESHome",
+            "--linux-shortcut",                                // adds a .desktop entry / menu shortcut
+            "--icon", "src/main/resources/fr/eshome/watersort/watersort.$imgType",
+            "--verbose",
+        )
+        resourceDir = file("packaging/linux")
+
     }
+}
+
+tasks.register("injectMetainfo") {
+    dependsOn("jpackage")
+    doLast {
+        val debDir = layout.buildDirectory.dir("jpackage").get().asFile
+        val debFile = debDir.listFiles { f -> f.name.endsWith(".deb") }
+            ?.singleOrNull()
+            ?: throw GradleException("Expected exactly one .deb file in $debDir")
+
+        val extractDir = layout.buildDirectory.dir("deb-extract").get().asFile
+        delete(extractDir)
+        mkdir(extractDir)
+
+        exec { commandLine("dpkg-deb", "-R", debFile.absolutePath, extractDir.absolutePath) }
+
+        // metainfo
+        val metainfoDestDir = extractDir.resolve("usr/share/metainfo")
+        metainfoDestDir.mkdirs()
+        copy {
+            from("packaging/metainfo/fr.eshome.watersort.metainfo.xml")
+            into(metainfoDestDir)
+        }
+
+        // themed icon — adjust size to match your actual source PNG dimensions
+        val iconDestDir = extractDir.resolve("usr/share/icons/hicolor/256x256/apps")
+        iconDestDir.mkdirs()
+        copy {
+            from("src/main/resources/fr/eshome/watersort/watersort.png")
+            into(iconDestDir)
+            rename { "watersort.png" }
+        }
+
+        exec {
+            commandLine(
+                "chmod", "755",
+                extractDir.resolve("DEBIAN/postinst").absolutePath,
+                extractDir.resolve("DEBIAN/preinst").absolutePath
+            )
+        }
+
+        // fix Icon= in the desktop file to use the themed name instead of absolute path
+        val desktopFile = extractDir.resolve("opt/watersort/lib/watersort-watersort.desktop")
+        val content = desktopFile.readText().replace(
+            Regex("^Icon=.*$", RegexOption.MULTILINE),
+            "Icon=watersort"
+        )
+        desktopFile.writeText(content)
+
+        delete(debFile)
+        exec { commandLine("dpkg-deb", "-b", extractDir.absolutePath, debFile.absolutePath) }
+    }
+}
+
+tasks.named("jpackage") {
+    finalizedBy("injectMetainfo")
 }

@@ -29,20 +29,19 @@
 
     <launchable type="desktop-id">fr.eshome.watersort.desktop</launchable>
 
+    <icon type="stock">watersort</icon>
+
     <screenshots>
         <screenshot type="default">
-            <image>https://raw.githubusercontent.com/esHome33/Water-Color-Puzzle/refs/heads/main/screenshots/img1.png
-            </image>
+            <image>https://raw.githubusercontent.com/esHome33/Water-Color-Puzzle/refs/heads/main/screenshots/img1.png</image>
             <caption>Main gameplay screen</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/esHome33/Water-Color-Puzzle/refs/heads/main/screenshots/img2.png
-            </image>
+            <image>https://raw.githubusercontent.com/esHome33/Water-Color-Puzzle/refs/heads/main/screenshots/img2.png</image>
             <caption>Game stats screen</caption>
         </screenshot>
         <screenshot>
-            <image>https://raw.githubusercontent.com/esHome33/Water-Color-Puzzle/refs/heads/main/screenshots/img3.png
-            </image>
+            <image>https://raw.githubusercontent.com/esHome33/Water-Color-Puzzle/refs/heads/main/screenshots/img3.png</image>
             <caption>Select and pour !</caption>
         </screenshot>
     </screenshots>
@@ -53,6 +52,7 @@
     <content_rating type="oars-1.1"/>
 
     <releases>
+        <release version="1.2.3" date="2026-08-02"/>
         <release version="1.2.2" date="2026-08-02">
             <description>
                 <p>This release has the same gameplay as previous versions:</p>
