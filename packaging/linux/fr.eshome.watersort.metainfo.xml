@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+    <id>fr.eshome.watersort</id>
+
+    <name>Water Sort</name>
+    <summary>A relaxing water sorting puzzle game</summary>
+
+    <metadata_license>MIT</metadata_license>
+    <project_license>MIT</project_license>
+
+    <developer id="fr.eshome">
+        <name>ESHome33</name>
+    </developer>
+
+    <description>
+        <p>
+            Water Sort is a relaxing puzzle game where you sort colored liquids
+            into separate tubes. Pour water between tubes until each one contains
+            a single color, using strategy and a bit of patience to solve
+            increasingly tricky puzzles.
+        </p>
+        <p>Features:</p>
+        <ul>
+            <li>Hundreds of levels of increasing difficulty</li>
+            <li>Simple, intuitive controls</li>
+            <li>Level restart at any time</li>
+        </ul>
+    </description>
+
+    <launchable type="desktop-id">fr.eshome.watersort.desktop</launchable>
+
+    <screenshots>
+        <screenshot type="default">
+            <image>https://github.com/esHome33/Water-Color-Puzzle/blob/main/screenshots/img1.png</image>
+            <caption>Main gameplay screen</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://github.com/esHome33/Water-Color-Puzzle/blob/main/screenshots/img2.png</image>
+            <caption>Game stats screen</caption>
+        </screenshot>
+        <screenshot>
+            <image>https://github.com/esHome33/Water-Color-Puzzle/blob/main/screenshots/img3.png</image>
+            <caption>Select and pour !</caption>
+        </screenshot>
+    </screenshots>
+
+    <url type="homepage">https://github.com/esHome33/Water-Color-Puzzle</url>
+    <!-- Replace with your real site once app.site.base-url isn't localhost -->
+
+    <content_rating type="oars-1.1"/>
+
+    <releases>
+        <release version="1.2.2" date="2026-08-02"/>
+    </releases>
+
+    <categories>
+        <category>Game</category>
+        <category>LogicGame</category>
+    </categories>
+</component>
